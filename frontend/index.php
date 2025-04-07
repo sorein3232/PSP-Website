@@ -1,6 +1,7 @@
 <?php
 session_start();
 include '../dbs_connection/database.php'; // Ensure database connection
+include '../session_handler/session_timeout.php';
 ?>
 
 <!DOCTYPE html>
