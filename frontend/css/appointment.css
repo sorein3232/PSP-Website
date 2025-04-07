@@ -1,0 +1,277 @@
+/* General Styles */
+body {
+  font-family: "Arial", sans-serif;
+  margin: 0;
+  padding: 0;
+  background: url("../resources/appointmentbg.jpg") no-repeat center center
+    fixed;
+  background-size: cover;
+  color: #fff;
+}
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  white-space: nowrap;
+}
+
+/* Appointment Section */
+.appointment-section {
+  text-align: center;
+  margin: 60px auto 40px;
+}
+
+.appointment-section h1 {
+  text-align: center;
+  font-size: 3.3rem; /* Adjust as necessary */
+  color: #fdd835;
+  padding: 40px 25px;
+  border-radius: 10px;
+  text-transform: uppercase;
+  display: inline-block;
+  font-weight: bold;
+  margin-bottom: 5px;
+  white-space: nowrap;  
+}
+
+/* Form Styles */
+.appointment-form {
+  background-color: rgba(0, 0, 0, 0.95); /* Semi-transparent black */  
+  color: #000;
+  max-width: 700px;
+  margin: 20px auto;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+.appointment-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.appointment-form input,
+.appointment-form textarea,
+.appointment-form select {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+.appointment-form textarea {
+  resize: none;
+}
+
+.appointment-form button {
+  background-color: #fdd835;
+  color: rgba(37, 37, 37, 0.564);
+  font-size: 18px;
+  font-weight: bold;
+  border: none;
+  padding: 12px 25px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+.appointment-form button:hover {
+  background-color: #000;
+  color: #fdd835;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Footer */
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px 40px;
+  background: linear-gradient(to right, #f57f17, #fdd835);
+  color: #000;
+}
+
+.footer h1 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.footer p {
+  font-size: 16px;
+  margin: 5px 0;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .appointment-form {
+    padding: 20px;
+  }
+
+  .footer {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+}
+
+.appointment-section {
+  max-width: 800px;
+  margin: 0 auto; /* Centers the section horizontally */
+  padding: 20px;
+}
+
+.appointment-form {
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center the content horizontally */
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
+  text-align: left; /* Ensure labels align to the left */
+  width: 100%; /* Make sure labels span full width */
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  padding: 12px; /* Increased padding for better usability */
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  box-sizing: border-box; /* Ensures padding is inside the width */
+}
+
+textarea {
+  resize: vertical; /* Allows vertical resizing */
+}
+
+button {
+  padding: 12px 20px;
+  background-color: #ff8800;
+  border: none;
+  color: white;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 15px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+button:hover {
+  background-color: #e77f00;
+}
+
+/* 🔹 Appointment Section */
+.appointment-list {
+  margin-top: 30px;
+  padding: 20px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 🔹 Heading Styling */
+.appointment-list h2 {
+  font-size: 24px;
+  text-align: center;
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 20px;
+  padding: 10px;
+  border-bottom: 2px solid #fdd835;
+}
+
+/* 🔹 Table Responsiveness */
+.table-responsive {
+  overflow-x: auto;
+}
+
+/* 🔹 Table Styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* 🔹 Table Headers */
+th {
+  background: #fdd835;
+  color: white;
+  font-size: 16px;
+  padding: 12px;
+  text-align: center;
+}
+
+/* 🔹 Table Rows */
+td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: center;
+  font-size: 14px;
+  color: #333;
+}
+
+/* 🔹 Alternating Row Colors */
+tbody tr:nth-child(even) {
+  background: #f9f9f9;
+}
+
+/* 🔹 Button Styling */
+button {
+  padding: 8px 15px;
+  background: #ff4d4d;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+button[type="submit"] {
+  color: #fff; /* White text */
+}
+
+
+button:hover {
+  background: #cc0000;
+}
+
+/* 🔹 Status Styling */
+td span {
+  font-weight: bold;
+  color: #888;
+}
+
+/* 🔹 Mobile Responsive */
+@media (max-width: 600px) {
+  th,
+  td {
+    padding: 8px;
+    font-size: 14px;
+  }
+
+  .appointment-list h2 {
+    font-size: 20px;
+  }
+}

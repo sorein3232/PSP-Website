@@ -1,0 +1,107 @@
+/* Header Styling */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #000;
+    padding: 10px 20px;
+  }
+  
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .logo-image {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    border-radius: 50%;
+  }
+  
+  .logo-text {
+    font-size: 20px;
+    font-weight: bold;
+    color: #ffcd00;
+    text-transform: uppercase;
+    line-height: 1.2;
+  }
+  
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .header a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 18px;
+    padding: 10px 15px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .header a.active {
+    color: #ffcd00;
+  }
+  
+  .header a:hover {
+    background-color: #ffcd00;
+    color: #000;
+  }
+  
+  /* Header Buttons */
+  .login-btn,
+  .signup-btn {
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px 20px;
+    border: 2px solid transparent;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .login-btn {
+    background-color: transparent;
+    color: #ffcd00;
+    border: 2px solid #ffcd00;
+  }
+  
+  .login-btn:hover {
+    background-color: #ffcd00;
+    color: #000;
+    transform: scale(1.05);
+  }
+  
+  .signup-btn {
+    background-color: #ffcd00;
+    color: #000;
+  }
+  
+  .signup-btn:hover {
+    background-color: #e5b800;
+    transform: scale(1.05);
+  }
+  
+  /* Responsive Design for Header */
+  @media screen and (max-width: 768px) {
+    .header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .header-right {
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+  
+    .login-btn,
+    .signup-btn {
+      padding: 8px 15px;
+      font-size: 14px;
+    }
+  }
+  

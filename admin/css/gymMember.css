@@ -1,0 +1,407 @@
+/* General Reset */
+body,
+html {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  color: #333;
+  height: 100%;
+}
+
+/* Layout */
+.container {
+  display: flex; /* Use flexbox for layout */
+  height: 100vh;
+}
+
+/* Header Styles */
+.header {
+  background-color: #000;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  position: fixed;
+  width: 100%; /* Ensures header spans across the full width */
+  top: 0;
+  z-index: 100;
+  box-sizing: border-box;
+}
+
+.header .logo {
+  display: flex;
+  align-items: center;
+}
+
+.header .logo img {
+  height: 40px;
+  margin-right: 10px;
+}
+
+.header h2 {
+  margin: 0;
+  text-align: center;
+  flex-grow: 1;
+}
+
+.logout {
+  background-color: #f00;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  position: relative;
+  z-index: 101; /* Ensure the button stays on top */
+}
+
+.logout:hover {
+  background-color: #b22222; /* Darker red on hover */
+}
+.notification-container {
+  position: relative;
+  display: inline-block;
+}
+
+.notification-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  position: relative;
+}
+
+.notification-badge {
+  background: red;
+  color: white;
+  border-radius: 50%;
+  padding: 3px 7px;
+  font-size: 12px;
+  position: absolute;
+  top: -5px;
+  right: -5px;
+}
+
+.notification-dropdown {
+  display: none;
+  position: absolute;
+  right: 0;
+  background: white;
+  color: black;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 200px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.notification-dropdown p {
+  padding: 10px;
+  margin: 0;
+  border-bottom: 1px solid #ddd;
+  cursor: pointer;
+}
+
+.notification-dropdown p:hover {
+  background: #f5f5f5;
+}
+
+/* Sidebar Styles */
+.sidebar {
+  background-color: #ffd700; /* Yellow color */
+  width: 250px;
+  padding: 20px 10px;
+  height: 100%;
+  box-sizing: border-box;
+  position: fixed; /* Sidebar fixed */
+  top: 100px; /* Adjusted for more space below the header */
+  bottom: 0;
+  overflow-y: auto;
+  z-index: 100; /* Ensure the sidebar is above other content */
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar ul li {
+  padding: 15px 20px; /* Increased horizontal padding for better click area */
+  cursor: pointer;
+  font-size: 16px;
+  color: black;
+  border-bottom: 1px solid #ddd;
+  display: flex; /* Align items in a row */
+  align-items: center; /* Vertically align items */
+  position: relative; /* Allow z-index adjustments */
+}
+
+.sidebar ul li .emoji {
+  margin-right: 10px; /* Adds space between the emoji and the text */
+  font-size: 22px; /* Adjusts the size of the emoji for consistency */
+}
+
+.sidebar ul li.active,
+.sidebar ul li:hover {
+  background-color: #ffa500; /* Hover items are orange */
+  color: white;
+}
+
+.sidebar ul li a {
+  text-decoration: none;
+  color: inherit;
+  display: block; /* Make the anchor tag take up the whole space */
+  padding: 10px 0; /* Add some vertical padding */
+}
+
+/* Main Content Styling */
+.main-content {
+  margin-left: 250px; /* Space for sidebar */
+  padding: 80px 30px 20px 30px; /* Adjust top padding for fixed header */
+  background-color: #f8f8f8;
+  flex-grow: 1;
+  overflow-y: auto;
+  margin-top: 80px; /* Ensures content starts below the fixed header */
+}
+
+/* Search Bar Styles */
+.search-bar {
+  margin-bottom: 20px;
+}
+
+.search-bar label {
+  font-weight: bold;
+}
+
+.search-bar input {
+  margin-left: 10px;
+  padding: 5px;
+  width: 300px;
+}
+
+/* Member Table Styling */
+.member-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.member-table th,
+.member-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.member-table th {
+  background-color: #000;
+  color: #fff;
+}
+
+.member-table button {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.freeze {
+  background-color: #ff0;
+  color: #000;
+}
+
+.unfreeze {
+  background-color: #0f0;
+  color: #fff;
+}
+
+.remove {
+  background-color: #f00;
+  color: #fff;
+}
+
+/* Modal Styling */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.6); /* Adjust opacity */
+  padding-top: 100px;
+}
+
+.modal-content {
+  background-color: #fff;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 8px;
+  width: 50%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.profile-image img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-right: 20px;
+}
+
+.user-info h3 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.user-info p {
+  margin: 5px 0;
+  font-size: 16px;
+}
+
+.membership-actions {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.membership-actions button {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 20px;
+  margin: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.membership-actions button.remove {
+  background-color: #f44336;
+}
+
+.close-btn {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Additional Modal Styles */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: white;
+  width: 350px;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  position: relative;
+  text-align: center;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 20px;
+  cursor: pointer;
+  color: #555;
+}
+
+.modal-content h2 {
+  margin-bottom: 15px;
+  font-size: 22px;
+  color: #333;
+}
+
+.modal-content label {
+  display: block;
+  text-align: left;
+  font-size: 14px;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.modal-content input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.modal-content button {
+  width: 100%;
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 10px;
+  margin-top: 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.modal-content button:hover {
+  background: #0056b3;
+}
+
+/* Adjust Sidebar in Mobile View */
+@media (max-width: 768px) {
+  /* Sidebar on smaller screens */
+  .sidebar {
+    width: 100%;
+    top: 60px; /* Adjust the sidebar position */
+  }
+
+  .main-content {
+    margin-left: 0;
+    margin-top: 60px; /* Adjust for smaller screen layout */
+    padding-top: 20px; /* Add padding at the top */
+  }
+
+  /* Toggle the sidebar visibility */
+  .sidebar.active {
+    width: 250px; /* Restore sidebar width when active */
+  }
+
+  .toggle-sidebar {
+    display: block;
+    background-color: #000;
+    color: white;
+    padding: 10px;
+    cursor: pointer;
+    border: none;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 101;
+  }
+}

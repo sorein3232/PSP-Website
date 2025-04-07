@@ -1,0 +1,264 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background-image: url("../resources/gym-background.jpg"); /* Replace with your background image URL */
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  padding: 20px;
+}
+
+.signup-container {
+  background: white;
+  width: 90%;
+  max-width: 400px;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+.signup-container h1 {
+  font-size: 24px;
+  color: #ff9800;
+  margin-bottom: 20px;
+}
+
+.signup-container input {
+  width: 100%;
+  margin: 5px 0;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  font-size: 14px;
+}
+
+.signup-container label {
+  font-size: 14px;
+  color: #666;
+  display: block;
+  margin: 10px 0 5px;
+}
+
+/* Birthday Section */
+.birthdayLabel {
+  text-align: left;
+  font-weight: bold;
+  font-size: smaller;
+  margin-left: 5px;
+}
+
+.birthdayInput {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.birthdayInput select {
+  width: calc(33.33% - 5px);
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Terms and Conditions */
+.terms {
+  display: flex;
+  align-items: center; /* Ensures checkbox and text are aligned */
+  justify-content: center;
+  font-size: 12px;
+  color: #666;
+  margin-top: 10px;
+  gap: 5px; /* Adds spacing between checkbox and text */
+}
+
+.terms input {
+  width: 16px; /* Standard checkbox size */
+  height: 16px;
+  accent-color: #ff9800; /* Matches the theme */
+  cursor: pointer;
+  margin: 0;
+}
+
+.terms label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.terms a {
+  color: #ff9800;
+  text-decoration: none;
+  margin-left: 3px;
+}
+
+.signup-container button {
+  background: #ff9800;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 15px;
+  width: 100%;
+}
+
+.signup-container button:hover {
+  background: #e68900;
+}
+
+/* Mobile Optimization */
+@media (max-width: 400px) {
+  .birthdayInput select {
+    width: 100%;
+  }
+}
+
+/* Modal Background */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  backdrop-filter: blur(5px); /* Slight blur effect */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Modal Content */
+.modal-content {
+  background: #fff;
+  padding: 20px;
+  width: 90%;
+  margin: 5% auto;
+  max-width: 600px;
+  border-radius: 10px;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+  position: relative;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Close Button */
+.close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #555;
+  transition: color 0.3s;
+}
+
+.close:hover {
+  color: #d9534f;
+}
+
+/* Modal Header */
+h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+/* Modal Text */
+p,
+ul {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #555;
+}
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+/* Keyframe animation for modal appearance */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .modal-content {
+    width: 95%;
+    padding: 15px;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+
+  p,
+  ul {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 800px) {
+  .modal-content {
+    width: 80%;
+    padding: 10px;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+
+  p,
+  ul {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 380px) {
+  .modal-content {
+    width: 90%;
+    padding: 10px;
+  }
+}
+
+@media (max-width: 320px) {
+  .modal-content {
+    width: 100%;
+    padding: 5px;
+  }
+}
+
+@media (min-width: 2560px) {
+  .modal-content {
+    width: 50%;
+    padding: 20px;
+  }
+
+  h2 {
+    font-size: 36px;
+  }
+
+  p,
+  ul {
+    font-size: 20px;
+  }
+}

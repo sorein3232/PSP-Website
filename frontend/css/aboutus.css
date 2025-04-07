@@ -1,0 +1,249 @@
+/* General Styling */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  color: #fff;
+  background: url("../resources/about-us-bg.jpg") no-repeat center center/cover;
+  background-attachment: fixed;
+  display: flex;
+  flex-direction: column; /* Ensures the content grows and pushes the footer */
+  min-height: 100vh; /* Ensures the body takes at least the full height of the screen */
+}
+
+/* Body Styling */
+.main-content {
+  flex: 1; /* This ensures content pushes footer to the bottom */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+
+/* Glimpse Section Styling */
+.glimpse-section {
+  text-align: center;
+  padding: 50px 20px;
+  background: rgba(0, 0, 0, 0.9); /* Dark background */
+  color: #ffcd00; /* Title in yellow */
+}
+
+.glimpse-title {
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 40px;
+  border-bottom: 3px solid #ffcd00;
+  display: inline-block;
+  padding-bottom: 10px;
+}
+
+.glimpse-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.glimpse-item {
+  width: 300px;
+  text-align: center;
+}
+
+.glimpse-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border: 2px solid #ffcd00;
+  border-radius: 10px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glimpse-image:hover {
+  transform: scale(1.05);
+  box-shadow: 0px 10px 20px rgba(255, 255, 0, 0.6);
+}
+
+.glimpse-caption {
+  margin-top: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+}
+
+/* Content Section */
+.content {
+  padding: 40px 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 40px;
+  position: relative;
+  z-index: 1;
+}
+
+.content::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6); /* Dark overlay */
+  z-index: -1;
+}
+
+.card {
+  background-color: rgba(34, 34, 34, 0.8) !important;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  color: #544a4a;
+  width: 300px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.8);
+}
+
+.card img {
+  width: 60px;
+  height: 60px;
+  margin-bottom: 15px;
+}
+
+.card h2 {
+  font-size: 22px;
+  margin-bottom: 10px;
+  color: #ffcd00;
+}
+
+.card p {
+  font-size: 16px;
+  line-height: 1.5;
+  color: #ccc;
+}
+
+.icon {
+  display: block; /* Make it behave like a block element */
+  margin: 0 auto; /* Center horizontally */
+}
+
+/* Footer Styling */
+.footer {
+  background: linear-gradient(to right, #ffa500, #ffd700);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px;
+  color: #000;
+  width: 100%;
+  margin-top: auto; /* Ensures footer stays at the bottom of the page */
+}
+
+.leftfooter,
+.rightfooter {
+  width: 45%;
+  padding: 10px;
+}
+
+.footer h1 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.footer p {
+  font-size: 16px;
+  margin: 10px 0;
+}
+
+/* Responsive Design for Footer */
+@media screen and (max-width: 768px) {
+  .footer {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .leftfooter,
+  .rightfooter {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+}
+
+/* Personnel Section Styling */
+.personnel-section {
+  text-align: center;
+  padding: 50px 50px;
+  background: rgba(0, 0, 0, 0.9); /* Dark background */
+  color: #ffcd00; /* Title in yellow */
+  padding-top: 25px;
+}
+
+.personnel-card:hover .personnel-photo-wrapper {
+  transform: scale(1.05);
+  box-shadow: 0px 10px 20px rgba(255, 255, 0, 0.6);
+}
+
+.personnel-title {
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 50px;
+  text-transform: uppercase;
+  border-bottom: 3px solid #ffcd00;
+  display: inline-block;
+  padding-bottom: 10px;
+}
+
+.personnel-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.8);
+}
+
+.personnel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 30px;
+  justify-items: center;
+  
+}
+
+.personnel-card {
+  text-align: center;
+  color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.personnel-photo-wrapper {
+  border: 4px solid #ffcd00; /* Matches the gold border */
+  border-radius: 50%;
+  overflow: hidden;
+  width: 150px;
+  height: 150px;
+  margin: 0 auto 20px auto;
+}
+
+.personnel-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.personnel-name {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 10px 0 5px;
+  color: #ffcd00;
+  text-transform: uppercase;
+}
+
+.personnel-role {
+  font-size: 16px;
+  font-weight: normal;
+  color: #ccc;
+}

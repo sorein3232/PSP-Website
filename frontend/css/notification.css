@@ -1,0 +1,91 @@
+/* Notification Button */
+.notification-btn,
+.logout-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.notification-btn i {
+  font-size: 18px;
+  color: #fff;
+}
+
+/* Hover effect to match the other navigation links */
+.notification-btn:hover,
+.logout-btn:hover {
+  background-color: #fdd835;
+  color: #000;
+}
+
+.logout-btn {
+  font-weight: bold;
+}
+
+.notification-popup {
+  display: none;
+  position: absolute;
+  top: 50px; /* Position below the notification button */
+  right: 15px; /* Adjust spacing from the right */
+  background-color: #fff;
+  border-radius: 15px; /* Rounded corners */
+  width: 280px;
+  min-height: 300px; /* Ensures minimum height */
+  max-height: 400px; /* Sets a max height to enable scrolling */
+  overflow-y: auto; /* Enables vertical scrolling if content overflows */
+  padding: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  color: #333;
+  z-index: 1001;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  transform: translateY(-10px); /* Initial position */
+}
+
+/* Show the dropdown */
+.notification-popup.show {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Style for individual notification messages */
+.notification-message {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  background: #f9f9f9;
+  border-radius: 5px;
+  margin-bottom: 5px;
+}
+
+.notification-message:last-child {
+  border-bottom: none;
+}
+
+.notification-message {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.notification-message small {
+  color: gray;
+}
+
+.see-notifications-btn {
+  background-color: #fdd835;
+  padding: 10px;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  font-weight: bold;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}

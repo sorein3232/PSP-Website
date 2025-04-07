@@ -1,0 +1,293 @@
+/* General Styling */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  color: #fff;
+  background-color: #000; /* Ensure the background of the entire body is black */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Body Styling */
+.main-content {
+  flex: 1;
+  /* Ensures content pushes footer to the bottom */
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 100vh;
+  background: url("../resources/gym-main.jpg") no-repeat center center/cover;
+  position: relative;
+  padding: 20px;
+}
+
+.body::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6); /* Dark overlay for the background */
+  z-index: 1;
+}
+
+.body h1,
+.body h2 {
+  position: relative;
+  z-index: 2;
+  color: #fff;
+  margin: 10px 0;
+}
+
+.body h1 {
+  font-size: 48px;
+  font-weight: bold;
+  color: #ffcd00;
+}
+
+.body h2 {
+  font-size: 24px;
+}
+
+/* Footer Styling */
+.footer {
+  background: linear-gradient(to right, #ffa500, #ffd700);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px;
+  color: #000;
+  width: 100%;
+  margin-top: auto;
+}
+
+.leftfooter,
+.rightfooter {
+  width: 45%;
+  padding: 10px;
+}
+
+.footer h1 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.footer p {
+  font-size: 16px;
+  margin: 10px 0;
+}
+
+/* Responsive Design for Footer */
+@media screen and (max-width: 768px) {
+  .footer {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .leftfooter,
+  .rightfooter {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+}
+
+/* Trial Section Styling */
+.trial-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 40px 20px;
+  background-color: #000;
+  color: #fff;
+  border-radius: 10px;
+  margin: 20px auto;
+  max-width: 1200px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Updated CSS for Advertisement Section */
+
+.advertisements {
+  display: grid;
+  gap: 20px;
+  justify-content: center;
+  padding: 30px;
+  background: linear-gradient(135deg, #000, #222);
+}
+
+.advertisement-item {
+  display: flex;
+  align-items: center;
+  max-width: 900px;
+  background: #111;
+  border-radius: 12px;
+  overflow: hidden;
+  padding: 20px;
+  box-shadow: 0px 5px 15px rgba(255, 204, 0, 0.5);
+  transition: transform 0.3s ease-in-out;
+}
+
+.advertisement-item:hover {
+  transform: scale(1.05);
+}
+
+.ad-image {
+  width: 40%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.ad-content {
+  width: 60%;
+  padding: 20px;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.ad-title {
+  font-size: 26px;
+  font-weight: bold;
+  color: #ffcd00;
+  text-transform: uppercase;
+  background-color: rgba(51, 51, 51, 0.8);
+  padding: 15px;
+  border-radius: 5px;
+}
+
+.ad-description {
+  font-size: 16px;
+  line-height: 1.5;
+  color: #ccc;
+  background-color: rgba(34, 34, 34, 0.8);
+  padding: 15px;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.ad-btn {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background: #ffcd00;
+  color: #000;
+  font-weight: bold;
+  border-radius: 5px;
+  text-decoration: none;
+  text-align: center;
+  transition: background 0.3s;
+}
+
+.ad-btn:hover {
+  background: #ffdb4d;
+}
+
+.no-ads {
+  color: #ffcd00;
+  text-align: center;
+  font-size: 20px;
+}
+
+@media screen and (max-width: 768px) {
+  .advertisement-item {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .ad-image {
+    width: 100%;
+  }
+
+  .ad-content {
+    width: 100%;
+  }
+}
+
+/* Carousel Image Fixing */
+.carousel-item img {
+  width: 100%; /* Ensures full width */
+  height: 100%; /* Matches the carousel height */
+  object-fit: contain; /* Ensures the entire image is visible */
+  object-position: center; /* Centers the image */
+  border-radius: 10px;
+  display: block;
+  max-height: 400px; /* Ensures image does not exceed the carousel height */
+  margin: auto; /* Centers the image inside the container */
+  background-color: #000; /* Ensures no white gaps if image has transparency */
+}
+
+/* Announcement Section Styling */
+#announcementCarousel {
+  background-color: #000; /* Set the background color of the carousel to black */
+  padding: 60px 0; /* Adjust padding for better spacing */
+}
+
+/* Additional adjustments to the carousel container */
+.carousel-inner {
+  display: flex;
+  align-items: center; /* Ensures carousel items are centered vertically */
+  overflow: hidden; /* Ensures the items do not overflow */
+  background-color: #000; /* Keeps inner carousel background black */
+  width: 100%; /* Ensure it takes up the full width of the container */
+  height: 400px; /* Ensures the height remains consistent */
+  position: relative; /* Ensures that the carousel caption is positioned correctly */
+}
+
+/* Carousel Item Adjustments */
+.carousel-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 400px; /* Ensures uniform height */
+  position: relative; /* Prevents absolute positioning issues */
+}
+
+/* Optional: Ensuring the text in the carousel is positioned correctly */
+.carousel-caption {
+  background-color: rgba(
+    0,
+    0,
+    0,
+    0.7
+  ); /* Dark background with opacity for text visibility */
+  color: #ffcd00; /* Make the caption text yellow */
+  padding: 15px;
+  border-radius: 5px;
+  font-size: 1.5rem; /* Adjust font size for better readability */
+  text-align: center; /* Center the text */
+  position: absolute;
+  bottom: 10px;
+  width: 100%;
+}
+
+/* Ensure the carousel controls are not too big */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  border-radius: 50%;
+  background-color: rgba(255, 205, 0, 0.7);
+}
+
+/* Make the carousel controls more compact */
+.carousel-control-prev,
+.carousel-control-next {
+  width: 5%;
+  height: 100%;
+  background-color: #ffcd00;
+}
+
+/* Adjust the carousel's height and appearance */
+#announcementCarousel {
+  max-width: 100%; /* Ensures the carousel is responsive */
+  margin-bottom: 20px;
+}

@@ -1,0 +1,197 @@
+/* General Reset */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    color: #333;
+    height: 100%;
+}
+
+/* Layout Grid */
+.container {
+    display: grid;
+    grid-template-columns: 250px 1fr; /* Sidebar and Main Content */
+    grid-template-rows: auto 1fr;
+    height: 100vh;
+    margin: 0; /* Ensure no margin around the container */
+}
+
+/* HEADER */
+.header {
+    grid-column: span 2;
+    background-color: #000;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+}
+
+.header .logo {
+    display: flex;
+    align-items: center;
+}
+
+.header .logo img {
+    height: 40px;
+    margin-right: 10px;
+}
+
+.header h2 {
+    margin: 0;
+    text-align: center;
+    flex-grow: 1;
+}
+
+.logout {
+    background-color: #f00;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+/* Sidebar */
+.sidebar {
+    background-color: #FFD700; /* Yellow color */
+    width: 250px;
+    padding: 20px 10px;
+    height: 100%;
+    box-sizing: border-box;
+    position: fixed; /* Sidebar fixed */
+    top: 100px; /* Adjusted for more space below the header */
+    left: 0; /* Sidebar to the left */
+    bottom: 0;
+    overflow-y: auto;
+    z-index: 100; /* Ensure the sidebar is above other content */
+}
+
+/* Sidebar Links Styling */
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar ul li {
+    padding: 15px 20px; /* Adjusted padding for a more compact design */
+    cursor: pointer;
+    font-size: 16px;
+    color: black;
+    border-bottom: 1px solid #ddd;
+    display: flex; /* Align items in a row */
+    align-items: center; /* Vertically align items */
+    position: relative; /* Allow z-index adjustments */
+}
+
+.sidebar ul li .emoji {
+    margin-right: 10px; /* Adds space between the emoji and the text */
+    font-size: 20px; /* Adjusts the size of the emoji for consistency */
+}
+
+.sidebar ul li.active, 
+.sidebar ul li:hover {
+    background-color: #FFA500; /* Hover items are orange */
+    color: white;
+}
+
+.sidebar ul li a {
+    text-decoration: none;
+    color: inherit;
+    display: flex; /* Ensures both icon and text are aligned */
+    align-items: center; /* Vertical alignment */
+    padding: 10px 0; /* Add some vertical padding */
+}
+
+/* Main Content Styling */
+.main-content {
+    margin-left: 250px; /* Space for sidebar */
+    padding: 80px 30px 20px 30px; /* Adjust top padding for fixed header */
+    background-color: #F8F8F8;
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-top: 80px; /* Ensures content starts below the fixed header */
+    grid-column: 2; /* Ensures content area takes up the second column */
+    margin: 0; /* Remove extra margin */
+    top: 0; /* Align to the top of the container */
+}
+
+/* Table Container */
+.table-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+table {
+    width: 80%;
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+th, td {
+    border: 1px solid black;
+    padding: 15px;
+    text-align: center;
+}
+
+th {
+    background-color: black;
+    color: white;
+}
+
+td img {
+    width: 80px;
+    height: 50px;
+    object-fit: cover;
+}
+
+/* Button Styling */
+button {
+    padding: 8px 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #4CAF50;
+    color: white;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+button:hover {
+    background-color: #45a049; /* Darker green on hover */
+}
+
+button.edit {
+    background-color: #32CD32;
+    color: white;
+}
+
+button.remove {
+    background-color: red;
+    color: white;
+}
+
+button.edit:hover {
+    background-color: #2E8B57;
+}
+
+button.remove:hover {
+    background-color: #B22222;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%; /* Make sidebar take full width in mobile view */
+        top: 60px; /* Adjust for header */
+    }
+
+    .main-content {
+        margin-left: 0; /* Remove left margin when sidebar takes full width */
+        margin-top: 60px; /* Adjust for smaller screen layout */
+    }
+}

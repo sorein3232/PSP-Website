@@ -1,0 +1,221 @@
+/* General Reset */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    color: #333;
+    height: 100%;
+}
+
+/* Layout */
+.container {
+    display: flex; /* Use flexbox for layout */
+    height: 100vh;
+}
+
+/* Header Styles */
+.header {
+    background-color: #000;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    position: fixed;
+    width: 100%; /* Ensures header spans across the full width */
+    top: 0;
+    z-index: 100;
+    box-sizing: border-box;
+}
+
+.header .logo {
+    display: flex;
+    align-items: center;
+}
+
+.header .logo img {
+    height: 40px;
+    margin-right: 10px;
+}
+
+.header h2 {
+    margin: 0;
+    text-align: center;
+    flex-grow: 1;
+}
+
+.logout {
+    background-color: #f00;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    position: relative;
+    z-index: 101; /* Ensure the button stays on top */
+}
+
+.logout:hover {
+    background-color: #B22222; /* Darker red on hover */
+}
+
+/* Sidebar Styles */
+.sidebar {
+    background-color: #FFD700; /* Yellow color */
+    width: 250px;
+    padding: 20px 10px;
+    height: 100%;
+    box-sizing: border-box;
+    position: fixed; /* Sidebar fixed */
+    top: 100px; /* Adjusted for more space below the header */
+    bottom: 0;
+    overflow-y: auto;
+    z-index: 100; /* Ensure the sidebar is above other content */
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar ul li {
+    padding: 15px 20px; /* Increased horizontal padding for better click area */
+    cursor: pointer;
+    font-size: 16px;
+    color: black;
+    border-bottom: 1px solid #ddd;
+    display: flex; /* Align items in a row */
+    align-items: center; /* Vertically align items */
+    position: relative; /* Allow z-index adjustments */
+}
+
+.sidebar ul li .emoji {
+    margin-right: 10px; /* Adds space between the emoji and the text */
+    font-size: 22px; /* Adjusts the size of the emoji for consistency */
+}
+
+.sidebar ul li.active, 
+.sidebar ul li:hover {
+    background-color: #FFA500; /* Hover items are orange */
+    color: white;
+}
+
+.sidebar ul li a {
+    text-decoration: none;
+    color: inherit;
+    display: block; /* Make the anchor tag take up the whole space */
+    padding: 10px 0; /* Add some vertical padding */
+}
+
+/* Main Content Styling */
+.main-content {
+    margin-left: 250px; /* Space for sidebar */
+    padding: 80px 30px 20px 30px; /* Adjust top padding for fixed header */
+    background-color: #F8F8F8;
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-top: 80px; /* Ensures content starts below the fixed header */
+}
+
+/* Modify font and icon sizes for better consistency */
+.sidebar ul li a {
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    margin-top: 20px;
+    border-radius: 10px; /* Rounded corners for the table */
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Adds a shadow for better depth */
+}
+
+th, td {
+    padding: 15px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+th {
+    background-color: #000;
+    color: white;
+    font-weight: bold;
+}
+
+td img {
+    width: 80px;
+    height: auto;
+    object-fit: cover;
+}
+
+/* Button Styling */
+button {
+    padding: 8px 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #4CAF50;
+    color: white;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+button:hover {
+    background-color: #45a049; /* Darker green on hover */
+}
+
+button.edit {
+    background-color: #32CD32;
+    color: white;
+}
+
+button.remove {
+    background-color: red;
+    color: white;
+}
+
+button.edit:hover {
+    background-color: #2E8B57;
+}
+
+button.remove:hover {
+    background-color: #B22222;
+}
+
+@media (max-width: 768px) {
+    /* Sidebar on smaller screens */
+    .sidebar {
+        width: 100%;
+        top: 60px; /* Adjust the sidebar position */
+    }
+
+    .main-content {
+        margin-left: 0;
+        margin-top: 60px; /* Adjust for smaller screen layout */
+    }
+
+    /* Toggle the sidebar visibility */
+    .sidebar.active {
+        width: 250px; /* Restore sidebar width when active */
+    }
+
+    .toggle-sidebar {
+        display: block;
+        background-color: #000;
+        color: white;
+        padding: 10px;
+        cursor: pointer;
+        border: none;
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        z-index: 101;
+    }
+}

@@ -1,0 +1,264 @@
+/* General Reset */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    color: #333;
+    height: 100%;
+}
+
+/* Layout */
+.container {
+    display: grid;
+    grid-template-columns: 250px 1fr; /* Sidebar and Main Content */
+    grid-template-rows: auto 1fr;
+    height: 100vh;
+    margin: 0; /* Ensure no margin around the container */
+}
+
+/* HEADER */
+.header {
+    grid-column: span 2;
+    background-color: #000;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+}
+
+.header .logo {
+    display: flex;
+    align-items: center;
+}
+
+.header .logo img {
+    height: 40px;
+    margin-right: 10px;
+}
+
+.header h2 {
+    margin: 0;
+    text-align: center;
+    flex-grow: 1;
+}
+
+.logout {
+    background-color: #f00;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    background-color: #FFD700; /* Yellow color */
+    padding: 20px 10px;
+    width: 250px;
+    height: 100%;
+    box-sizing: border-box;
+    position: fixed; /* Sidebar fixed */
+    top: 100px; /* Adjusted for more space below the header */
+    left: 0; /* Sidebar to the left */
+    bottom: 0;
+    overflow-y: auto;
+    z-index: 100; /* Ensure the sidebar is above other content */
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar ul li {
+    padding: 15px 20px; /* Increased horizontal padding for better click area */
+    cursor: pointer;
+    font-size: 16px;
+    color: black;
+    border-bottom: 1px solid #ddd;
+    display: flex; /* Align items in a row */
+    align-items: center; /* Vertically align items */
+}
+
+.sidebar ul li .emoji {
+    margin-right: 10px; /* Adds space between the emoji and the text */
+    font-size: 22px; /* Adjusts the size of the emoji */
+}
+
+.sidebar ul li.active, 
+.sidebar ul li:hover {
+    background-color: #FFA500; /* Hover items are orange */
+    color: white;
+}
+
+.sidebar ul li a {
+    text-decoration: none;
+    color: inherit;
+    display: flex; /* Ensures both icon and text are aligned */
+    align-items: center; /* Vertical alignment */
+    padding: 10px 0; /* Add some vertical padding */
+}
+
+/* Main Content Styling */
+.main-content {
+    grid-column: 2; /* Ensures the content area takes up the second column in the grid */
+    padding: 80px 30px 20px 30px; /* Adjust top padding for fixed header */
+    background-color: #F8F8F8;
+    flex-grow: 1;
+    overflow-y: auto;
+    margin: 0; /* Remove margin to prevent extra space */
+    top: 0; /* Align to the top of the container */
+}
+
+/* Form Section Styles */
+.form-section {
+    margin-bottom: 30px;
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.form-row {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    width: 100%;
+}
+
+.form-row label {
+    font-weight: bold;
+    margin-right: 15px;
+    width: 200px;
+}
+
+.form-row input[type="text"],
+.form-row textarea,
+.form-row input[type="file"] {
+    padding: 10px;
+    margin: 0;
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.form-row textarea {
+    height: 100px;
+}
+
+.form-row .submit {
+    padding: 10px 20px;
+    background-color: #FFA500; /* Orange background */
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.form-row .submit:hover {
+    background-color: #FF8C00; /* Darker orange on hover */
+}
+
+/* Table Styles */
+.advertisement-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.advertisement-table th, 
+.advertisement-table td {
+    text-align: left;
+    padding: 15px;
+    border: 1px solid #ddd;
+}
+
+.advertisement-table th {
+    background-color: black;
+    color: white;
+    text-transform: uppercase;
+    font-size: 14px;
+}
+
+.advertisement-table td img {
+    max-width: 100px;
+    border-radius: 5px;
+}
+
+.advertisement-table .edit {
+    background-color: #32CD32;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.advertisement-table .remove {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.advertisement-table .edit:hover {
+    background-color: #2E8B57;
+}
+
+.advertisement-table .remove:hover {
+    background-color: #B22222;
+}
+
+/* Modal Styling */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; 
+    z-index: 1000; /* Ensure it appears above everything */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Dark overlay effect */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    width: 400px;
+    position: relative;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
