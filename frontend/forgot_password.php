@@ -49,7 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mail->isHTML(true);
             $mail->Subject = "Password Reset Request";
             $mail->Body = "Click the link below to reset your password:<br><br>
-                <a href='http://localhost/psp/frontend/reset_password.php?token=" . urlencode($token) . "'>Reset Password</a>";
+                <a href='http://localhost/PSP-Website/frontend/reset_password.php?token=" . urlencode($token) . "'>Reset Password</a>";
 
             $mail->send();
             echo '<script>alert("Password reset link has been sent!")</script>';

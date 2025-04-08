@@ -36,6 +36,34 @@ $result = $conn->query($sql);
     <link rel="stylesheet" href="../frontend/css/header.css">
     <link rel="stylesheet" href="../frontend/css/notification.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Additional styles for the opening hours section */
+        .hours-of-operation {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .hours-of-operation h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        
+        .operation-hours p {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        
+        .operation-hours strong {
+            color: #0056b3;
+        }
+    </style>
 </head>
 
 <body>
@@ -92,6 +120,21 @@ $result = $conn->query($sql);
                         <p><?= $row['day'] ?>: <?= $row['activity_description'] ?><br> <?= $row['personnel_name'] ?>, <?= date('h:i A', strtotime($row['time'])) ?></p>
                     </div>
                 <?php endwhile; ?>
+                
+                <!-- Sunday Closed Class Card -->
+                <div class="class-card sunday-closed">
+                    <img src="../admin/uploads/closed_sunday.jpg" alt="Closed on Sunday">
+                    <p><strong>Sunday:</strong> CLOSED<br>Open Monday-Saturday: 6:00 AM - 5:00 PM</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Hours of Operation Information - Centered with light background below schedule -->
+        <div class="hours-of-operation">
+            <h2>Opening Hours</h2>
+            <div class="operation-hours">
+                <p><strong>Monday - Saturday:</strong> Open from 6:00 AM to 5:00 PM</p>
+                <p><strong>Sunday:</strong> CLOSED</p>
             </div>
         </div>
     </div>

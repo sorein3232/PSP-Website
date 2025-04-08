@@ -184,7 +184,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mail->addAddress($emailAddress);
             $mail->isHTML(true);
             $mail->Subject = 'Verify Your Email';
-            $mail->Body = "Click <a href='http://localhost/psp/frontend/verify.php?token=$verificationToken'>here</a> to verify your account.";
+            $mail->Body = "Click <a href='http://localhost/PSP-Website/frontend/verify.php?token=$verificationToken'>here</a> to verify your account.";
 
             $mail->send();
             echo json_encode(["status" => "success", "message" => "✅ Registration successful! Check your email for verification."]);
