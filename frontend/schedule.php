@@ -22,6 +22,25 @@ $sql = "SELECT * FROM schedule
             END ASC, 
             time ASC";
 $result = $conn->query($sql);
+
+// Store all schedule items in an array
+$schedules = [];
+while ($row = $result->fetch_assoc()) {
+    $schedules[] = $row;
+}
+
+// Try to find the Sunday schedule (ID 7)
+$sundaySchedule = null;
+foreach ($schedules as $key => $schedule) {
+    if ($schedule['id'] == 7) {
+        $sundaySchedule = $schedule;
+        // Remove it from the regular schedule array
+        unset($schedules[$key]);
+        break;
+    }
+}
+// Reset array keys after removing Sunday
+$schedules = array_values($schedules);
 ?>
 
 <!DOCTYPE html>
@@ -62,6 +81,41 @@ $result = $conn->query($sql);
         
         .operation-hours strong {
             color: #0056b3;
+        }
+        
+        /* 3x3 Grid Layout */
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: auto auto auto;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .class-card {
+            width: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .class-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .class-card p {
+            padding: 15px;
+            margin: 0;
+            text-align: center;
+        }
+        
+        /* Style for the centered card in third row */
+        .center-third-row {
+            grid-column: 2; /* Center column */
+            grid-row: 3; /* Third row */
         }
     </style>
 </head>
@@ -114,18 +168,42 @@ $result = $conn->query($sql);
         <div class="group-class-schedule">
             <h2>Group Class Schedule</h2>
             <div class="schedule-grid">
-                <?php while ($row = $result->fetch_assoc()): ?>
-                    <div class="class-card">
-                        <img src="../admin/uploads/<?= $row['schedule_picture'] ?>" alt="<?= $row['activity_description'] ?>">
-                        <p><?= $row['day'] ?>: <?= $row['activity_description'] ?><br> <?= $row['personnel_name'] ?>, <?= date('h:i A', strtotime($row['time'])) ?></p>
-                    </div>
-                <?php endwhile; ?>
+                <?php
+                $count = 0;
                 
-                <!-- Sunday Closed Class Card -->
-                <div class="class-card sunday-closed">
-                    <img src="../admin/uploads/closed_sunday.jpg" alt="Closed on Sunday">
-                    <p><strong>Sunday:</strong> CLOSED<br>Open Monday-Saturday: 6:00 AM - 5:00 PM</p>
-                </div>
+                // Create the first 6 class cards (positions 0-5)
+                for ($i = 0; $i < 6; $i++) {
+                    if ($count < count($schedules)) {
+                        $schedule = $schedules[$count];
+                        echo '<div class="class-card">
+                                <img src="../admin/uploads/' . $schedule['schedule_picture'] . '" alt="' . $schedule['activity_description'] . '">
+                                <p>' . $schedule['day'] . ': ' . $schedule['activity_description'] . '<br>' . 
+                                $schedule['personnel_name'] . ', ' . date('h:i A', strtotime($schedule['time'])) . '</p>
+                            </div>';
+                        $count++;
+                    } else {
+                        echo '<div class="class-card">
+                                <img src="../admin/uploads/placeholder.jpg" alt="No Schedule">
+                                <p>No Class Scheduled</p>
+                            </div>';
+                    }
+                }
+                
+                // Add the Sunday card (ID 7) in the center of the third row with the same design as other cards
+                if ($sundaySchedule) {
+                    echo '<div class="class-card center-third-row">
+                            <img src="../admin/uploads/' . $sundaySchedule['schedule_picture'] . '" alt="' . $sundaySchedule['activity_description'] . '">
+                            <p>' . $sundaySchedule['day'] . ': ' . $sundaySchedule['activity_description'] . '<br>' . 
+                            $sundaySchedule['personnel_name'] . ', ' . date('h:i A', strtotime($sundaySchedule['time'])) . '</p>
+                        </div>';
+                } else {
+                    // Fallback if ID 7 is not found
+                    echo '<div class="class-card center-third-row">
+                            <img src="../admin/uploads/closed_sunday.jpg" alt="Closed on Sunday">
+                            <p><strong>Sunday:</strong> CLOSED<br>Open Monday-Saturday: 6:00 AM - 5:00 PM</p>
+                        </div>';
+                }
+                ?>
             </div>
         </div>
         
