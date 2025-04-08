@@ -102,8 +102,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 
-    if (!preg_match('/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{8,16}$/', $password)) {
-        echo json_encode(["status" => "error", "message" => "❌ Password must be 8-16 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character."]);
+    // Age validation - check if user is at least 16 years old
+    $birthDate = new DateTime("$year-$month-$day");
+    $currentDate = new DateTime();
+    $age = $currentDate->diff($birthDate)->y;
+    
+    if ($age < 16) {
+        echo json_encode(["status" => "error", "message" => "❌ You must be at least 16 years old to register."]);
+        exit();
+    }
+
+    // Detailed password validation
+    $password_errors = [];
+    if (strlen($password) < 8 || strlen($password) > 16) {
+        $password_errors[] = "Password must be 8-16 characters long";
+    }
+    if (!preg_match('/[A-Z]/', $password)) {
+        $password_errors[] = "Include at least one uppercase letter";
+    }
+    if (!preg_match('/[a-z]/', $password)) {
+        $password_errors[] = "Include at least one lowercase letter";
+    }
+    if (!preg_match('/\d/', $password)) {
+        $password_errors[] = "Include at least one number";
+    }
+    if (!preg_match('/[\W_]/', $password)) {
+        $password_errors[] = "Include at least one special character";
+    }
+    
+    if (!empty($password_errors)) {
+        echo json_encode([
+            "status" => "error", 
+            "message" => "❌ Password requirements: " . implode(", ", $password_errors)
+        ]);
         exit();
     }
 
@@ -178,8 +209,149 @@ header("Content-Type: text/html");
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
     <link rel="stylesheet" href="css/register.css">
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close {
+            float: right;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* Password strength indicator styles */
+        .password-container {
+            position: relative;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .password-strength {
+            margin-top: 5px;
+            height: 5px;
+            width: 100%;
+            background: #ddd;
+            border-radius: 3px;
+        }
+
+        .password-strength-bar {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.3s, background-color 0.3s;
+        }
+
+        .password-feedback {
+            font-size: 12px;
+            margin-top: 5px;
+            color: #666;
+        }
+
+        .very-weak { background-color: #ff4d4d; width: 20%; }
+        .weak { background-color: #ffa64d; width: 40%; }
+        .medium { background-color: #ffff4d; width: 60%; }
+        .strong { background-color: #4dff4d; width: 80%; }
+        .very-strong { background-color: #26b226; width: 100%; }
+
+        /* Password requirements popup */
+        .password-requirements {
+            display: none;
+            position: absolute;
+            width: 250px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            top: 70px;
+            left: 0;
+            transition: opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .password-requirements.show {
+            display: block;
+            opacity: 1;
+        }
+
+        .password-requirements h4 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .requirements-list {
+            padding-left: 15px;
+            margin: 0;
+        }
+
+        .requirements-list li {
+            margin-bottom: 5px;
+            font-size: 12px;
+            list-style-type: none;
+            position: relative;
+            padding-left: 18px;
+        }
+
+        .requirements-list li:before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #ff4d4d;
+        }
+
+        .requirement-met:before {
+            background-color: #26b226 !important;
+        }
+
+        /* Arrow pointing to input */
+        .password-requirements:before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            border-width: 0 10px 10px 10px;
+            border-style: solid;
+            border-color: transparent transparent #ddd transparent;
+        }
+
+        .password-requirements:after {
+            content: "";
+            position: absolute;
+            top: -9px;
+            left: 20px;
+            border-width: 0 10px 10px 10px;
+            border-style: solid;
+            border-color: transparent transparent white transparent;
+        }
+    </style>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            // Form submission handler
             document.getElementById("registerForm").addEventListener("submit", function(event) {
                 event.preventDefault();
 
@@ -188,6 +360,26 @@ header("Content-Type: text/html");
 
                 if (!agreeChecked) {
                     alert("❌ You must agree to the terms and conditions before proceeding.");
+                    return;
+                }
+
+                // Age validation - client side
+                const day = parseInt(document.getElementById("day").value);
+                const month = parseInt(document.getElementById("month").value) - 1; // JavaScript months are 0-indexed
+                const year = parseInt(document.getElementById("year").value);
+                
+                const birthDate = new Date(year, month, day);
+                const today = new Date();
+                const ageDiff = today.getFullYear() - birthDate.getFullYear();
+                const monthDiff = today.getMonth() - birthDate.getMonth();
+                
+                let age = ageDiff;
+                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+                
+                if (age < 16) {
+                    alert("❌ You must be at least 16 years old to register.");
                     return;
                 }
 
@@ -205,6 +397,7 @@ header("Content-Type: text/html");
                     .catch(error => console.error("Error:", error));
             });
 
+            // Terms and conditions modal handlers
             document.getElementById("termsLink").addEventListener("click", function(event) {
                 event.preventDefault();
                 document.getElementById("termsModal").style.display = "block";
@@ -213,26 +406,111 @@ header("Content-Type: text/html");
             document.getElementById("closeModal").addEventListener("click", function() {
                 document.getElementById("termsModal").style.display = "none";
             });
+
+            // Close modals when clicking outside
+            window.addEventListener("click", function(event) {
+                const termsModal = document.getElementById("termsModal");
+                
+                if (event.target === termsModal) {
+                    termsModal.style.display = "none";
+                }
+            });
+
+            // Password requirements popup handlers
+            const passwordInput = document.getElementById("password");
+            const requirementsPopup = document.getElementById("passwordRequirements");
+            
+            passwordInput.addEventListener("focus", function() {
+                requirementsPopup.classList.add("show");
+            });
+            
+            passwordInput.addEventListener("blur", function(e) {
+                // Small delay to check if focus moved to an element inside the popup
+                setTimeout(() => {
+                    if (!requirementsPopup.contains(document.activeElement)) {
+                        requirementsPopup.classList.remove("show");
+                    }
+                }, 100);
+            });
+
+            // Password strength checker
+            const strengthBar = document.getElementById("strength-bar");
+            const strengthText = document.getElementById("strength-text");
+            
+            // Password requirement checkers
+            const lengthReq = document.getElementById("length-req");
+            const uppercaseReq = document.getElementById("uppercase-req");
+            const lowercaseReq = document.getElementById("lowercase-req");
+            const numberReq = document.getElementById("number-req");
+            const specialReq = document.getElementById("special-req");
+
+            passwordInput.addEventListener("input", function() {
+                const password = passwordInput.value;
+                let strength = 0;
+                let feedback = "Very Weak";
+                
+                // Check requirements
+                const hasLength = password.length >= 8 && password.length <= 16;
+                const hasUppercase = /[A-Z]/.test(password);
+                const hasLowercase = /[a-z]/.test(password);
+                const hasNumber = /\d/.test(password);
+                const hasSpecial = /[\W_]/.test(password);
+                
+                // Update requirement indicators
+                updateRequirement(lengthReq, hasLength);
+                updateRequirement(uppercaseReq, hasUppercase);
+                updateRequirement(lowercaseReq, hasLowercase);
+                updateRequirement(numberReq, hasNumber);
+                updateRequirement(specialReq, hasSpecial);
+                
+                // Calculate strength
+                if (hasLength) strength++;
+                if (hasUppercase) strength++;
+                if (hasLowercase) strength++;
+                if (hasNumber) strength++;
+                if (hasSpecial) strength++;
+                
+                // Update visual indicators
+                strengthBar.className = "password-strength-bar";
+                
+                switch (strength) {
+                    case 1:
+                        strengthBar.classList.add("very-weak");
+                        feedback = "Very Weak";
+                        break;
+                    case 2:
+                        strengthBar.classList.add("weak");
+                        feedback = "Weak";
+                        break;
+                    case 3:
+                        strengthBar.classList.add("medium");
+                        feedback = "Medium";
+                        break;
+                    case 4:
+                        strengthBar.classList.add("strong");
+                        feedback = "Strong";
+                        break;
+                    case 5:
+                        strengthBar.classList.add("very-strong");
+                        feedback = "Very Strong";
+                        break;
+                    default:
+                        strengthBar.classList.add("very-weak");
+                        feedback = "Very Weak";
+                }
+                
+                strengthText.textContent = feedback;
+            });
+            
+            function updateRequirement(element, isMet) {
+                if (isMet) {
+                    element.classList.add("requirement-met");
+                } else {
+                    element.classList.remove("requirement-met");
+                }
+            }
         });
     </script>
-    <style>
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-
-        .close {
-            float: right;
-            font-size: 24px;
-            cursor: pointer;
-        }
-    </style>
 </head>
 
 <body>
@@ -243,15 +521,38 @@ header("Content-Type: text/html");
             <input type="text" name="username" placeholder="Username" required>
             <input type="text" name="phoneNumber" placeholder="Phone Number (e.g., 9171234567)" required>
 
-            <h4 class="birthdayLabel">Birthday</h4>
+            <h4 class="birthdayLabel">Birthday (Must be at least 16 years old)</h4>
             <div style="display: flex;">
-                <input type="number" name="day" placeholder="Day" min="1" max="31" required>
-                <input type="number" name="month" placeholder="Month" min="1" max="12" required>
-                <input type="number" name="year" placeholder="Year" min="1900" max="2025" required>
+                <input type="number" id="day" name="day" placeholder="Day" min="1" max="31" required>
+                <input type="number" id="month" name="month" placeholder="Month" min="1" max="12" required>
+                <input type="number" id="year" name="year" placeholder="Year" min="1900" max="2025" required>
             </div>
 
             <input type="email" name="emailAddress" placeholder="Enter your email" required>
-            <input type="password" name="password" placeholder="Create Password" required>
+            
+            <div class="password-container">
+                <input type="password" id="password" name="password" placeholder="Create Password" required>
+                <div class="password-strength">
+                    <div id="strength-bar" class="password-strength-bar"></div>
+                </div>
+                <div class="password-feedback">
+                    <span>Password Strength: </span>
+                    <span id="strength-text">Very Weak</span>
+                </div>
+                
+                <!-- Password Requirements Popup -->
+                <div id="passwordRequirements" class="password-requirements">
+                    <h4>Password Requirements</h4>
+                    <ul class="requirements-list">
+                        <li id="length-req">8-16 characters</li>
+                        <li id="uppercase-req">One uppercase letter</li>
+                        <li id="lowercase-req">One lowercase letter</li>
+                        <li id="number-req">One number</li>
+                        <li id="special-req">One special character</li>
+                    </ul>
+                </div>
+            </div>
+            
             <input type="password" name="confirmPassword" placeholder="Confirm Password" required>
 
             <div class="terms">
@@ -266,6 +567,7 @@ header("Content-Type: text/html");
         </p>
     </div>
 
+    <!-- Terms and Conditions Modal -->
     <div id="termsModal" class="modal">
         <div class="modal-content">
             <span class="close" id="closeModal">&times;</span>
@@ -273,7 +575,7 @@ header("Content-Type: text/html");
             <p>Welcome to PSP-Ubelt! By creating an account on our website, you agree to comply with the following Terms and Conditions. Please read them carefully.</p>
 
             <ul>
-                <li><strong>1. Eligibility:</strong> You must be at least 18/16 years old to create an account. By registering, you confirm that the information provided is accurate and complete.</li>
+                <li><strong>1. Eligibility:</strong> You must be at least 16 years old to create an account. By registering, you confirm that the information provided is accurate and complete.</li>
 
                 <li><strong>2. Account Security:</strong> You are responsible for maintaining the confidentiality of your account credentials. Notify us immediately of any unauthorized access or suspicious activity.</li>
 
