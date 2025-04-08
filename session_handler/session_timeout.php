@@ -1,4 +1,17 @@
 <?php
+/**
+ * Session Idle Time Tracker
+ * 
+ * This file manages session timeout after 15 minutes of inactivity.
+ * It can be included at the beginning of any PHP script to enforce
+ * idle time detection and automatic logout.
+ * 
+ * How to use:
+ * 1. Place this file in a common directory accessible by both admin and user pages
+ * 2. Include this file at the top of any PHP page: include 'path/to/session_timeout.php';
+ * 3. The script will automatically handle idle time detection and inject the needed JavaScript
+ */
+
 // Start session if not already started
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -6,7 +19,8 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Configuration
 $idle_time = 5; // 15 minutes in seconds (15 * 60 = 900)
-$redirect_url = "../frontend/login.php"; // Common redirect URL for both admins and users when session expires
+$admin_redirect = "/admin/timeout.php"; // Redirect URL for admins when session expires
+$user_redirect = "/frontend/logout.php"; // Redirect URL for regular users when session expires
 
 // Determine if the current script is running in admin directory
 function isAdminPath() {
@@ -23,34 +37,11 @@ function updateLastActivity() {
 }
 
 /**
- * Handles the logout process directly
- * Clears session data and redirects to login page
- */
-function handleLogout($reason = 'idle') {
-    global $redirect_url;
-    
-    // Clear session data
-    session_unset();
-    session_destroy();
-    
-    // Make sure no output has been sent before this point
-    if (!headers_sent()) {
-        // First show the alert and then redirect
-        echo '<script>alert("Your session has expired due to inactivity."); window.location.href="'.$redirect_url.'?reason='.$reason.'";</script>';
-        exit;
-    } else {
-        // JavaScript fallback if headers already sent
-        echo '<script>alert("Your session has expired due to inactivity."); window.location.href="'.$redirect_url.'?reason='.$reason.'";</script>';
-        exit;
-    }
-}
-
-/**
- * Checks if the user is idle and handles logout if necessary
+ * Checks if the user is idle and redirects if necessary
  * This runs automatically when the file is included
  */
 function checkIdleTime() {
-    global $idle_time;
+    global $idle_time, $admin_redirect, $user_redirect;
     
     // Initialize last_activity timestamp if it doesn't exist
     if (!isset($_SESSION['last_activity'])) {
@@ -60,7 +51,24 @@ function checkIdleTime() {
     
     // Check if user has been idle for too long
     if ((time() - $_SESSION['last_activity']) > $idle_time) {
-        handleLogout('idle');
+        // Determine if user is admin or regular user based on current path or session variable
+        $is_admin = isset($_SESSION['is_admin']) ? $_SESSION['is_admin'] : isAdminPath();
+        $redirect_url = $is_admin ? $admin_redirect : $user_redirect;
+        
+        // Clear session data
+        session_unset();
+        session_destroy();
+        
+        // Make sure no output has been sent before this point
+        if (!headers_sent()) {
+            // First show the alert and then redirect
+            echo '<script>alert("Your session has expired due to inactivity."); window.location.href="'.$redirect_url.'?reason=idle";</script>';
+            exit;
+        } else {
+            // JavaScript fallback if headers already sent
+            echo '<script>alert("Your session has expired due to inactivity."); window.location.href="'.$redirect_url.'?reason=idle";</script>';
+            exit;
+        }
     }
 }
 
