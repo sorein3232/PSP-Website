@@ -71,6 +71,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $title = trim($_POST['title']);
     $description = trim($_POST['description']);
     $old_image = $_POST['old_image'] ?? '';
+    
+    // Get activation status (default to active if not specified)
+    $is_active = isset($_POST['is_active']) ? intval($_POST['is_active']) : 1;
 
     // Validate input fields
     if (empty($title) || empty($description)) {
@@ -119,11 +122,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Prepare and execute update statement
     try {
-        $stmt = $conn->prepare("UPDATE advertisements SET title = ?, image = ?, description = ?, created_at = ? WHERE id = ?");
-        $stmt->bind_param("ssssi", $title, $image, $description, $updated_at, $id);
+        $stmt = $conn->prepare("UPDATE advertisements SET title = ?, image = ?, description = ?, created_at = ?, is_active = ? WHERE id = ?");
+        $stmt->bind_param("ssssii", $title, $image, $description, $updated_at, $is_active, $id);
         
         if ($stmt->execute()) {
-            $_SESSION['success'] = "Advertisement updated successfully.";
+            $status = ($is_active == 1) ? "active" : "inactive";
+            $_SESSION['success'] = "Advertisement updated successfully and set to $status.";
         } else {
             $_SESSION['error'] = "Failed to update advertisement. " . $stmt->error;
         }
