@@ -56,7 +56,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $response = [];
 
     // Collect and trim form data
-    $fullName = isset($_POST['fullName']) ? trim($_POST['fullName']) : '';
+    $firstName = isset($_POST['firstName']) ? trim($_POST['firstName']) : '';
+    $lastName = isset($_POST['lastName']) ? trim($_POST['lastName']) : '';
     $username = isset($_POST['username']) ? trim($_POST['username']) : '';
     $phoneNumber = isset($_POST['phoneNumber']) ? trim($_POST['phoneNumber']) : '';
     $emailAddress = isset($_POST['emailAddress']) ? trim($_POST['emailAddress']) : '';
@@ -67,9 +68,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $year = isset($_POST['year']) ? $_POST['year'] : '';
     $agree = isset($_POST['agree']) ? 1 : 0;
     $membership_status = "Inactive";
+    
+    // Create full name from first name and last name
+    $fullName = $firstName . ' ' . $lastName;
 
     // Validate required fields
-    if (empty($fullName) || empty($username) || empty($phoneNumber) || empty($emailAddress) || empty($password) || empty($confirmPassword) || empty($day) || empty($month) || empty($year)) {
+    if (empty($firstName) || empty($lastName) || empty($username) || empty($phoneNumber) || empty($emailAddress) || empty($password) || empty($confirmPassword) || empty($day) || empty($month) || empty($year)) {
         echo json_encode(["status" => "error", "message" => "❌ All fields are required."]);
         exit();
     }
@@ -166,8 +170,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Generate a unique verification token
     $verificationToken = bin2hex(random_bytes(32));
 
-    $stmt = $conn->prepare("INSERT INTO users (fullName, username, phoneNumber, emailAddress, password, birthday, membership_status, email_verified, verification_token) VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?)");
-    $stmt->bind_param("ssssssss", $fullName, $username, $phoneNumber, $emailAddress, $hashedPassword, $birthday, $membership_status, $verificationToken);
+    // Updated INSERT query to include first_name and last_name
+    $stmt = $conn->prepare("INSERT INTO users (fullName, first_name, last_name, username, phoneNumber, emailAddress, password, birthday, membership_status, email_verified, verification_token) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?)");
+    $stmt->bind_param("ssssssssss", $fullName, $firstName, $lastName, $username, $phoneNumber, $emailAddress, $hashedPassword, $birthday, $membership_status, $verificationToken);
 
     if ($stmt->execute()) {
         $mail = new PHPMailer(true);
@@ -348,6 +353,17 @@ header("Content-Type: text/html");
             border-style: solid;
             border-color: transparent transparent white transparent;
         }
+        
+        /* Name fields layout */
+        .name-fields {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+        }
+        
+        .name-fields input {
+            flex: 1;
+        }
     </style>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -517,7 +533,10 @@ header("Content-Type: text/html");
     <div class="signup-container">
         <h1>Sign Up</h1>
         <form id="registerForm">
-            <input type="text" name="fullName" placeholder="Full Name" required>
+            <div class="name-fields">
+                <input type="text" name="firstName" placeholder="First Name" required>
+                <input type="text" name="lastName" placeholder="Last Name" required>
+            </div>
             <input type="text" name="username" placeholder="Username" required>
             <input type="text" name="phoneNumber" placeholder="Phone Number (e.g., 9171234567)" required>
 
