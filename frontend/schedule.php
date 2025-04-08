@@ -20,7 +20,7 @@ $sql = "SELECT * FROM schedule
                 WHEN 'Saturday' THEN 6 
                 ELSE 7 
             END ASC, 
-            time ASC";
+            start_time ASC";
 $result = $conn->query($sql);
 
 // Store all schedule items in an array
@@ -56,33 +56,7 @@ $schedules = array_values($schedules);
     <link rel="stylesheet" href="../frontend/css/notification.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
-        /* Additional styles for the opening hours section */
-        .hours-of-operation {
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 20px;
-            background-color: #f8f9fa;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-        
-        .hours-of-operation h2 {
-            color: #333;
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
-        
-        .operation-hours p {
-            font-size: 18px;
-            line-height: 1.6;
-            margin-bottom: 10px;
-        }
-        
-        .operation-hours strong {
-            color: #0056b3;
-        }
-        
+    
         /* 3x3 Grid Layout */
         .schedule-grid {
             display: grid;
@@ -106,10 +80,22 @@ $schedules = array_values($schedules);
             object-fit: cover;
         }
         
-        .class-card p {
+        .class-card-content {
             padding: 15px;
             margin: 0;
             text-align: center;
+        }
+        
+        /* Style for the row-by-row text display */
+        .schedule-info-line {
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .schedule-info-day {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #333;
         }
         
         /* Style for the centered card in third row */
@@ -175,46 +161,73 @@ $schedules = array_values($schedules);
                 for ($i = 0; $i < 6; $i++) {
                     if ($count < count($schedules)) {
                         $schedule = $schedules[$count];
+                        
+                        // Format time display based on available fields
+                        $timeDisplay = "Time not specified";
+                        if (isset($schedule['start_time']) && isset($schedule['end_time'])) {
+                            $timeDisplay = date('h:i A', strtotime($schedule['start_time'])) . ' - ' . 
+                                          date('h:i A', strtotime($schedule['end_time']));
+                        } else if (isset($schedule['time'])) {
+                            $timeDisplay = date('h:i A', strtotime($schedule['time']));
+                        }
+                        
                         echo '<div class="class-card">
                                 <img src="../admin/uploads/' . $schedule['schedule_picture'] . '" alt="' . $schedule['activity_description'] . '">
-                                <p>' . $schedule['day'] . ': ' . $schedule['activity_description'] . '<br>' . 
-                                $schedule['personnel_name'] . ', ' . date('h:i A', strtotime($schedule['time'])) . '</p>
+                                <div class="class-card-content">
+                                    <span class="schedule-info-line schedule-info-day">' . $schedule['day'] . '</span>
+                                    <span class="schedule-info-line">' . $schedule['activity_description'] . '</span>
+                                    <span class="schedule-info-line">' . $schedule['personnel_name'] . '</span>
+                                    <span class="schedule-info-line">' . $timeDisplay . '</span>
+                                </div>
                             </div>';
                         $count++;
                     } else {
                         echo '<div class="class-card">
                                 <img src="../admin/uploads/placeholder.jpg" alt="No Schedule">
-                                <p>No Class Scheduled</p>
+                                <div class="class-card-content">
+                                    <span class="schedule-info-line">No Class Scheduled</span>
+                                </div>
                             </div>';
                     }
                 }
                 
                 // Add the Sunday card (ID 7) in the center of the third row with the same design as other cards
                 if ($sundaySchedule) {
+                    // Format time display based on available fields
+                    $timeDisplay = "Time not specified";
+                    if (isset($sundaySchedule['start_time']) && isset($sundaySchedule['end_time'])) {
+                        $timeDisplay = date('h:i A', strtotime($sundaySchedule['start_time'])) . ' - ' . 
+                                      date('h:i A', strtotime($sundaySchedule['end_time']));
+                    } else if (isset($sundaySchedule['time'])) {
+                        $timeDisplay = date('h:i A', strtotime($sundaySchedule['time']));
+                    }
+                    
                     echo '<div class="class-card center-third-row">
                             <img src="../admin/uploads/' . $sundaySchedule['schedule_picture'] . '" alt="' . $sundaySchedule['activity_description'] . '">
-                            <p>' . $sundaySchedule['day'] . ': ' . $sundaySchedule['activity_description'] . '<br>' . 
-                            $sundaySchedule['personnel_name'] . ', ' . date('h:i A', strtotime($sundaySchedule['time'])) . '</p>
+                            <div class="class-card-content">
+                                <span class="schedule-info-line schedule-info-day">' . $sundaySchedule['day'] . '</span>
+                                <span class="schedule-info-line">' . $sundaySchedule['activity_description'] . '</span>
+                                <span class="schedule-info-line">' . $sundaySchedule['personnel_name'] . '</span>
+                                <span class="schedule-info-line">' . $timeDisplay . '</span>
+                            </div>
                         </div>';
                 } else {
                     // Fallback if ID 7 is not found
                     echo '<div class="class-card center-third-row">
                             <img src="../admin/uploads/closed_sunday.jpg" alt="Closed on Sunday">
-                            <p><strong>Sunday:</strong> CLOSED<br>Open Monday-Saturday: 6:00 AM - 5:00 PM</p>
+                            <div class="class-card-content">
+                                <span class="schedule-info-line schedule-info-day">Sunday</span>
+                                <span class="schedule-info-line">CLOSED</span>
+                                <span class="schedule-info-line">Open Monday-Saturday</span>
+                                <span class="schedule-info-line">6:00 AM - 5:00 PM</span>
+                            </div>
                         </div>';
                 }
                 ?>
             </div>
         </div>
         
-        <!-- Hours of Operation Information - Centered with light background below schedule -->
-        <div class="hours-of-operation">
-            <h2>Opening Hours</h2>
-            <div class="operation-hours">
-                <p><strong>Monday - Saturday:</strong> Open from 6:00 AM to 5:00 PM</p>
-                <p><strong>Sunday:</strong> CLOSED</p>
-            </div>
-        </div>
+        
     </div>
 
     <!-- Footer Section -->

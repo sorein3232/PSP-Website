@@ -18,7 +18,8 @@ if (isset($_POST['submit'])) {
     $day = mysqli_real_escape_string($conn, $_POST['day']);
     $personnel = mysqli_real_escape_string($conn, $_POST['personnel']);
     $activity = mysqli_real_escape_string($conn, $_POST['activity']);
-    $time = mysqli_real_escape_string($conn, $_POST['time']);
+    $start_time = mysqli_real_escape_string($conn, $_POST['start_time']);
+    $end_time = mysqli_real_escape_string($conn, $_POST['end_time']);
     $current_timestamp = date('Y-m-d H:i:s'); // Uses Manila timezone
 
     // Handle file upload
@@ -47,7 +48,7 @@ if (isset($_POST['submit'])) {
         $_SESSION['toast_type'] = 'success';
     }
 
-    $sql = "UPDATE schedule SET schedule_picture='$picture', day='$day', personnel_name='$personnel', activity_description='$activity', time='$time', created_at='$current_timestamp' WHERE id='$id'";
+    $sql = "UPDATE schedule SET schedule_picture='$picture', day='$day', personnel_name='$personnel', activity_description='$activity', start_time='$start_time', end_time='$end_time', created_at='$current_timestamp' WHERE id='$id'";
 
     if ($conn->query($sql) === TRUE) {
         header("Location: scheduleAdmin.php");
@@ -140,7 +141,7 @@ if (isset($_SESSION['toast_message'])) {
                                 <th>Day</th>
                                 <th>Personnel Name</th>
                                 <th>Activity</th>
-                                <th>Time</th>
+                                <th>Time Duration</th>
                                 <th>Edit</th>
                             </tr>
                         </thead>
@@ -151,7 +152,21 @@ if (isset($_SESSION['toast_message'])) {
                                     <td><?= $row['day'] ?></td>
                                     <td><?= $row['personnel_name'] ?></td>
                                     <td><?= $row['activity_description'] ?></td>
-                                    <td><?= date('h:i A', strtotime($row['time'])) ?></td>
+                                    <td>
+                                        <?php 
+                                            // Check if we have both start_time and end_time
+                                            if (isset($row['start_time']) && isset($row['end_time'])) {
+                                                echo date('h:i A', strtotime($row['start_time'])) . ' - ' . date('h:i A', strtotime($row['end_time']));
+                                            } 
+                                            // Fallback for old entries that might only have time field
+                                            else if (isset($row['time'])) {
+                                                echo date('h:i A', strtotime($row['time']));
+                                            }
+                                            else {
+                                                echo "No time specified";
+                                            }
+                                        ?>
+                                    </td>
                                     <td>
                                         <button type="button" class="btn btn-info btn-sm"
                                             data-toggle="modal" data-target="#editModal"
@@ -159,7 +174,8 @@ if (isset($_SESSION['toast_message'])) {
                                             data-day="<?= $row['day'] ?>"
                                             data-personnel="<?= $row['personnel_name'] ?>"
                                             data-activity="<?= $row['activity_description'] ?>"
-                                            data-time="<?= $row['time'] ?>"
+                                            data-start-time="<?= $row['start_time'] ?? '' ?>"
+                                            data-end-time="<?= $row['end_time'] ?? '' ?>"
                                             data-image="<?= $row['schedule_picture'] ?>">
                                             Edit
                                         </button>
@@ -203,9 +219,15 @@ if (isset($_SESSION['toast_message'])) {
                         <input type="text" name="activity" id="edit_activity" class="form-control" required>
                     </div>
 
-                    <div class="form-group">
-                        <label>Time:</label>
-                        <input type="time" name="time" id="edit_time" class="form-control" required step="60">
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label>Start Time:</label>
+                            <input type="time" name="start_time" id="edit_start_time" class="form-control" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>End Time:</label>
+                            <input type="time" name="end_time" id="edit_end_time" class="form-control" required>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -244,7 +266,8 @@ if (isset($_SESSION['toast_message'])) {
             $('#edit_day').val(button.data('day'));
             $('#edit_personnel').val(button.data('personnel'));
             $('#edit_activity').val(button.data('activity'));
-            $('#edit_time').val(button.data('time'));
+            $('#edit_start_time').val(button.data('start-time'));
+            $('#edit_end_time').val(button.data('end-time'));
             $('#current_picture').attr('src', 'uploads/' + button.data('image'));
             $('#old_picture').val(button.data('image'));
         });
