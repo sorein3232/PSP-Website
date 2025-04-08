@@ -71,6 +71,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $title = trim($_POST['title']);
     $description = trim($_POST['description']);
     $old_image = $_POST['old_image'] ?? '';
+    
+    // Get the is_active status, default to 1 (active) if not set
+    $is_active = isset($_POST['is_active']) ? intval($_POST['is_active']) : 1;
+    
+    // Ensure is_active is either 0 or 1
+    if ($is_active != 0 && $is_active != 1) {
+        $is_active = 1; // Default to active if invalid value
+    }
 
     // Validate input fields
     if (empty($title) || empty($description)) {
@@ -117,13 +125,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-    // Prepare and execute update statement
+    // Prepare and execute update statement with is_active field
     try {
-        $stmt = $conn->prepare("UPDATE advertisements SET title = ?, image = ?, description = ?, created_at = ? WHERE id = ?");
-        $stmt->bind_param("ssssi", $title, $image, $description, $updated_at, $id);
+        $stmt = $conn->prepare("UPDATE advertisements SET title = ?, image = ?, description = ?, created_at = ?, is_active = ? WHERE id = ?");
+        $stmt->bind_param("ssssis", $title, $image, $description, $updated_at, $is_active, $id);
         
         if ($stmt->execute()) {
-            $_SESSION['success'] = "Advertisement updated successfully.";
+            $status_text = ($is_active == 1) ? "active" : "inactive";
+            $_SESSION['success'] = "Advertisement updated successfully. Status set to " . $status_text . ".";
         } else {
             $_SESSION['error'] = "Failed to update advertisement. " . $stmt->error;
         }

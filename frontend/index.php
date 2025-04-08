@@ -73,24 +73,24 @@ include '../session_handler/session_timeout.php';
     </div>
 
     <div class="advertisements">
-        <?php
-        $query = "SELECT title, image, description FROM advertisements ORDER BY created_at DESC";
-        $result = mysqli_query($conn, $query);
-        if (mysqli_num_rows($result) > 0) {
-            while ($row = mysqli_fetch_assoc($result)) {
-                echo "<div class='advertisement-item'>";
-                echo "<img src='../admin/" . htmlspecialchars($row['image']) . "' alt='Advertisement Image' class='ad-image'>";
-                echo "<div class='ad-content'>";
-                echo "<h3 class='ad-title'>" . htmlspecialchars($row['title']) . "</h3>";
-                echo "<p class='ad-description'>" . htmlspecialchars($row['description']) . "</p>";                echo "</div>";
-                echo "</div>";
-            }
-        } else {
-            echo "<p class='no-ads'>No advertisements available.</p>";
+    <?php
+    $query = "SELECT title, image, description FROM advertisements WHERE is_active = 1 ORDER BY created_at DESC";
+    $result = mysqli_query($conn, $query);
+    if (mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            echo "<div class='advertisement-item'>";
+            echo "<img src='../admin/" . htmlspecialchars($row['image']) . "' alt='Advertisement Image' class='ad-image'>";
+            echo "<div class='ad-content'>";
+            echo "<h3 class='ad-title'>" . htmlspecialchars($row['title']) . "</h3>";
+            echo "<p class='ad-description'>" . htmlspecialchars($row['description']) . "</p>";
+            echo "</div>";
+            echo "</div>";
         }
-        ?>
-    </div>
-
+    } else {
+        echo "<p class='no-ads'>No advertisements available.</p>";
+    }
+    ?>
+</div>
 
     <!-- Bootstrap Carousel for Announcements -->
     <div id="announcementCarousel" class="carousel slide mb-0" data-bs-ride="carousel">

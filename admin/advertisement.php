@@ -101,8 +101,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
         $image = "";
     }
 
-    $stmt = $conn->prepare("INSERT INTO advertisements (title, image, description, created_at) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("ssss", $title, $image, $description, $created_at);
+    // Default is_active value is 1 (active)
+    $is_active = 1;
+    
+    $stmt = $conn->prepare("INSERT INTO advertisements (title, image, description, created_at, is_active) VALUES (?, ?, ?, ?, ?)");
+    $stmt->bind_param("ssssi", $title, $image, $description, $created_at, $is_active);
     $stmt->execute();
     $stmt->close();
     header("Location: advertisement.php");
@@ -132,6 +135,35 @@ if (isset($_GET['delete'])) {
         unlink($row['image']);
     }
 
+    header("Location: advertisement.php");
+    exit();
+}
+
+// Handle activation/deactivation
+if (isset($_GET['toggle'])) {
+    $id = $_GET['toggle'];
+    
+    // Get current status
+    $stmt = $conn->prepare("SELECT is_active FROM advertisements WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    $stmt->close();
+    
+    // Toggle status (1 -> 0, 0 -> 1)
+    $new_status = ($row['is_active'] == 1) ? 0 : 1;
+    
+    // Update status
+    $stmt = $conn->prepare("UPDATE advertisements SET is_active = ? WHERE id = ?");
+    $stmt->bind_param("ii", $new_status, $id);
+    $stmt->execute();
+    $stmt->close();
+    
+    // Set success message
+    $status_text = ($new_status == 1) ? "activated" : "deactivated";
+    $_SESSION['success'] = "Advertisement successfully " . $status_text . ".";
+    
     header("Location: advertisement.php");
     exit();
 }
@@ -231,13 +263,16 @@ include('includes/header.php');
                                 <th>Material</th>
                                 <th>Description</th>
                                 <th>Created At</th>
+                                <th>Status</th>
                                 <th>Edit</th>
                                 <th>Remove</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php while ($row = $result->fetch_assoc()) : ?>
-                                <tr>
+                            <?php while ($row = $result->fetch_assoc()) : 
+                                $inactive_class = $row['is_active'] == 0 ? 'table-secondary text-muted' : '';
+                            ?>
+                                <tr class="<?= $inactive_class ?>">
                                     <td><?= htmlspecialchars($row['title']) ?></td>
                                     <td>
                                         <?php if (!empty($row['image'])): ?>
@@ -249,16 +284,29 @@ include('includes/header.php');
                                     <td><?= htmlspecialchars($row['description']) ?></td>
                                     <td><?= htmlspecialchars($row['created_at']) ?></td>
                                     <td>
+                                        <?php if($row['is_active'] == 1): ?>
+                                            <span class="badge badge-success">Active</span>
+                                            <a href="?toggle=<?= $row['id'] ?>" class="btn btn-outline-secondary btn-sm ml-2">
+                                                Deactivate
+                                            </a>
+                                        <?php else: ?>
+                                            <span class="badge badge-secondary">Inactive</span>
+                                            <a href="?toggle=<?= $row['id'] ?>" class="btn btn-outline-success btn-sm ml-2">
+                                                Activate
+                                            </a>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
                                         <button type="button" class="btn btn-info btn-sm"
                                             data-toggle="modal" data-target="#editModal"
                                             data-id="<?= htmlspecialchars($row["id"]) ?>"
                                             data-title="<?= htmlspecialchars($row["title"], ENT_QUOTES) ?>"
                                             data-image="<?= htmlspecialchars($row["image"]) ?>"
-                                            data-description="<?= htmlspecialchars($row["description"], ENT_QUOTES) ?>">
+                                            data-description="<?= htmlspecialchars($row["description"], ENT_QUOTES) ?>"
+                                            data-is-active="<?= htmlspecialchars($row["is_active"]) ?>">
                                             Edit
                                         </button>
                                     </td>
-
                                     <td>
                                         <a class="btn btn-danger btn-sm" href="?delete=<?= $row['id'] ?>" onclick="return confirm('Are you sure?')">Remove</a>
                                     </td>
@@ -312,6 +360,14 @@ include('includes/header.php');
                         <textarea id="editDescription" name="description" class="form-control" required></textarea>
                     </div>
 
+                    <div class="form-group">
+                        <label for="editIsActive">Status:</label>
+                        <select id="editIsActive" name="is_active" class="form-control">
+                            <option value="1">Active</option>
+                            <option value="0">Inactive</option>
+                        </select>
+                    </div>
+
                     <button type="submit" class="btn btn-success">Save Changes</button>
                 </form>
             </div>
@@ -334,12 +390,14 @@ include('includes/header.php');
         var title = button.data('title');
         var image = button.data('image');
         var description = button.data('description');
+        var isActive = button.data('is-active');
 
         var modal = $(this);
         modal.find('#editId').val(id);
         modal.find('#editTitle').val(title);
         modal.find('#editDescription').val(description);
-        modal.find('#editOldImage').val(image)
+        modal.find('#editOldImage').val(image);
+        modal.find('#editIsActive').val(isActive);
 
         if (image) {
             modal.find('#editImage').attr('src', image).show();
