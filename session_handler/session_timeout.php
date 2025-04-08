@@ -18,7 +18,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Configuration
-$idle_time = 5; // 15 minutes in seconds (15 * 60 = 900)
+$idle_time = 15 * 60; // 15 minutes in seconds (15 * 60 = 900)
 $admin_redirect = "/admin/timeout.php"; // Redirect URL for admins when session expires
 $user_redirect = "/frontend/logout.php"; // Redirect URL for regular users when session expires
 
