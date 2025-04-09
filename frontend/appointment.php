@@ -132,152 +132,78 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['action'])) {
             border-radius: 4px;
         }
         
-        
-        /* Styles for trainer selection and availability */
-        .trainer-selection-container {
-            margin: 15px 0;
-        }
-        
+        /* Fix for the checkbox alignment */
         .trainer-checkbox-wrapper {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-  padding: 5px 0;
-}
-
-.trainer-checkbox-wrapper label {
-    margin: 0 0 0 8px;
-    font-size: 15px;
-}
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 5px 0;
+            width: 100%;
+        }
         
         .trainer-checkbox-wrapper input[type="checkbox"] {
+            width: auto;
             margin-right: 10px;
+            margin-bottom: 0;
         }
         
+        .trainer-checkbox-wrapper label {
+            margin: 0;
+            display: inline;
+            width: auto;
+            flex: 1;
+            color: #000; /* Make text black for white background */
+        }
+        
+        /* Ensure trainer options take full width */
         #trainer-options {
-            margin-top: 10px;
+            width: 100%;
         }
         
-        /* Trainer schedule styling */
-.trainer-schedule-container {
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 15px;
-    margin-top: 15px;
-    background-color: rgba(255, 255, 255, 0.8);
-    display: none; /* Initially hidden */
-}
-
-.trainer-schedule-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-    margin-bottom: 20px;
-}
-
-.trainer-schedule-table th,
-.trainer-schedule-table td,
-.coach-schedule-table th,
-.coach-schedule-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: center;
-    color: #333; /* Ensuring text is dark and readable */
-}
-
-.trainer-schedule-table th,
-.coach-schedule-table th {
-    background-color: #f8f9fa;
-    color: #333;
-}
-
-.availability-available {
-    color: #28a745;
-    font-weight: bold;
-}
-
-.availability-busy {
-    color: #dc3545;
-}
-
-.trainer-info {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.trainer-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background-color: #007bff;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 10px;
-    font-weight: bold;
-}
-
-.trainer-name {
-    color: #333; /* Making coach names dark and readable */
-    font-size: 16px;
-}
-
-.coach-avatar-large {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background-color: #007bff;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 15px auto;
-    font-weight: bold;
-    font-size: 24px;
-}
-
-.coach-specific-schedule {
-    display: none;
-    text-align: center;
-}
-
-.coach-schedule-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-    margin-bottom: 20px;
-}
-
-/* Add a back button for individual coach schedules */
-.back-to-all {
-    background-color: #6c757d;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-bottom: 15px;
-}
-
-.back-to-all:hover {
-    background-color: #5a6268;
-}
-
-/* Making sure all text in the trainer schedule is readable */
-#trainer-schedule h4 {
-    color: #333;
-    margin-bottom: 15px;
-    text-align: center;
-}
-
-.coach-specific-schedule h4 {
-    color: #333;
-    margin-bottom: 15px;
-}
-
-
+        /* These styles override any conflicting styles from the external CSS */
+        .trainer-schedule-container {
+            width: 100%;
+        }
+        
+        .form-text {
+            width: 100%;
+            text-align: left;
+            color: #666; /* Darker text for better visibility on white */
+        }
+        
+        /* Override duplicated styles */
+        .appointment-section {
+            max-width: 800px;
+            margin: 60px auto 40px;
+            padding: 20px;
+        }
+        
+        /* Reset the form background to white */
+        .appointment-form {
+            background-color: #fff !important; /* White background */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #000 !important; /* Black text for white background */
+        }
+        
+        /* Ensure form labels are visible on white background */
+        .appointment-form label {
+            color: #000 !important; /* Black text for white background */
+        }
+        
+        /* Ensure the form inputs have consistent styling */
+        .appointment-form input,
+        .appointment-form textarea,
+        .appointment-form select {
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        /* Make small text more visible on white background */
+        .appointment-form small {
+            color: #666 !important;
+        }
     </style>
 </head>
 <body>
@@ -318,14 +244,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['action'])) {
                 <label for="time">Appointment Time</label>
                 <input type="time" id="time-input" name="time" min="06:00" max="17:00" step="3600" required>
                 <small class="form-text text-muted">Select a time between 6:00 AM and 5:00 PM. Time slots are available in 1-hour intervals. If you wish to avail a personal trainer, please select an appointment time based on your chosen trainer's schedule shown below.</small>
-                    
-                    
-                </select>
-
+                
                 <label for="description">Description</label>
                 <textarea id="description" name="description" rows="4" required></textarea>
 
-                <!-- Modified trainer selection section -->
+                <!-- Modified trainer selection section with fixed alignment -->
                 <div class="trainer-selection-container">
                     <div class="trainer-checkbox-wrapper">
                         <input type="checkbox" id="trainer-checkbox">
@@ -343,76 +266,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['action'])) {
                     </div>
 
                     <div id="trainer-schedule" class="trainer-schedule-container">
-    <h4>Trainers' Availability Schedule</h4>
-    
-    <div class="trainer-info">
-        <div class="trainer-avatar">N</div>
-        <strong class="trainer-name">Coach Nikko</strong>
-    </div>
-    <div class="trainer-info">
-        <div class="trainer-avatar">M</div>
-        <strong class="trainer-name">Coach Mark</strong>
-    </div>
-    <div class="trainer-info">
-        <div class="trainer-avatar">J</div>
-        <strong class="trainer-name">Coach Jayson</strong>
-    </div>
-    
-    <!-- Main comparison table shown initially -->
-    <table class="trainer-schedule-table">
-        <thead>
-            <tr>
-                <th>Day</th>
-                <th>Coach Nikko</th>
-                <th>Coach Mark</th>
-                <th>Coach Jayson</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Monday</td>
-                <td class="availability-available">6AM - 12PM</td>
-                <td class="availability-available">1PM - 5PM</td>
-                <td class="availability-available">9AM - 3PM</td>
-            </tr>
-            <tr>
-                <td>Tuesday</td>
-                <td class="availability-available">9AM - 3PM</td>
-                <td class="availability-available">6AM - 12PM</td>
-                <td class="availability-busy">Not Available</td>
-            </tr>
-            <tr>
-                <td>Wednesday</td>
-                <td class="availability-available">1PM - 5PM</td>
-                <td class="availability-available">9AM - 3PM</td>
-                <td class="availability-available">6AM - 12PM</td>
-            </tr>
-            <tr>
-                <td>Thursday</td>
-                <td class="availability-busy">Not Available</td>
-                <td class="availability-available">1PM - 5PM</td>
-                <td class="availability-available">9AM - 3PM</td>
-            </tr>
-            <tr>
-                <td>Friday</td>
-                <td class="availability-available">6AM - 12PM</td>
-                <td class="availability-busy">Not Available</td>
-                <td class="availability-available">1PM - 5PM</td>
-            </tr>
-            <tr>
-                <td>Saturday</td>
-                <td class="availability-available">9AM - 3PM</td>
-                <td class="availability-available">6AM - 12PM</td>
-                <td class="availability-available">1PM - 5PM</td>
-            </tr>
-            <tr>
-                <td>Sunday</td>
-                <td class="availability-busy">Closed</td>
-                <td class="availability-busy">Closed</td>
-                <td class="availability-busy">Closed</td>
-            </tr>
-        </tbody>
-    </table>
+                        <h4>Trainers' Availability Schedule</h4>
+                        
+                        <div class="trainer-info">
+                            <div class="trainer-avatar">N</div>
+                            <strong class="trainer-name">Coach Nikko</strong>
+                        </div>
+                        <div class="trainer-info">
+                            <div class="trainer-avatar">M</div>
+                            <strong class="trainer-name">Coach Mark</strong>
+                        </div>
+                        <div class="trainer-info">
+                            <div class="trainer-avatar">J</div>
+                            <strong class="trainer-name">Coach Jayson</strong>
+                        </div>
+                        
+                        <!-- Main comparison table shown initially -->
                         <table class="trainer-schedule-table">
                             <thead>
                                 <tr>
@@ -469,139 +338,138 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['action'])) {
                         </table>
                     </div>
                 </div>
-<!-- Coach Nikko's Schedule -->
-<div id="Coach-Nikko-schedule" class="coach-specific-schedule">
-        <h4>Coach Nikko's Schedule</h4>
-        <div class="coach-avatar-large">N</div>
-        <table class="coach-schedule-table">
-            <thead>
-                <tr>
-                    <th>Day</th>
-                    <th>Availability</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Monday</td>
-                    <td class="availability-available">6AM - 12PM</td>
-                </tr>
-                <tr>
-                    <td>Tuesday</td>
-                    <td class="availability-available">9AM - 3PM</td>
-                </tr>
-                <tr>
-                    <td>Wednesday</td>
-                    <td class="availability-available">1PM - 5PM</td>
-                </tr>
-                <tr>
-                    <td>Thursday</td>
-                    <td class="availability-busy">Not Available</td>
-                </tr>
-                <tr>
-                    <td>Friday</td>
-                    <td class="availability-available">6AM - 12PM</td>
-                </tr>
-                <tr>
-                    <td>Saturday</td>
-                    <td class="availability-available">9AM - 3PM</td>
-                </tr>
-                <tr>
-                    <td>Sunday</td>
-                    <td class="availability-busy">Closed</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+                
+                <!-- Coach Nikko's Schedule -->
+                <div id="Coach-Nikko-schedule" class="coach-specific-schedule">
+                    <h4>Coach Nikko's Schedule</h4>
+                    <div class="coach-avatar-large">N</div>
+                    <table class="coach-schedule-table">
+                        <thead>
+                            <tr>
+                                <th>Day</th>
+                                <th>Availability</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Monday</td>
+                                <td class="availability-available">6AM - 12PM</td>
+                            </tr>
+                            <tr>
+                                <td>Tuesday</td>
+                                <td class="availability-available">9AM - 3PM</td>
+                            </tr>
+                            <tr>
+                                <td>Wednesday</td>
+                                <td class="availability-available">1PM - 5PM</td>
+                            </tr>
+                            <tr>
+                                <td>Thursday</td>
+                                <td class="availability-busy">Not Available</td>
+                            </tr>
+                            <tr>
+                                <td>Friday</td>
+                                <td class="availability-available">6AM - 12PM</td>
+                            </tr>
+                            <tr>
+                                <td>Saturday</td>
+                                <td class="availability-available">9AM - 3PM</td>
+                            </tr>
+                            <tr>
+                                <td>Sunday</td>
+                                <td class="availability-busy">Closed</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-    <div id="Coach-Mark-schedule" class="coach-specific-schedule">
-        <h4>Coach Mark's Schedule</h4>
-        <div class="coach-avatar-large">M</div>
-        <table class="coach-schedule-table">
-            <thead>
-                <tr>
-                    <th>Day</th>
-                    <th>Availability</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Monday</td>
-                    <td class="availability-available">1PM - 5PM</td>
-                </tr>
-                <tr>
-                    <td>Tuesday</td>
-                    <td class="availability-available">6AM - 12PM</td>
-                </tr>
-                <tr>
-                    <td>Wednesday</td>
-                    <td class="availability-available">9AM - 3PM</td>
-                </tr>
-                <tr>
-                    <td>Thursday</td>
-                    <td class="availability-available">1PM - 5PM</td>
-                </tr>
-                <tr>
-                    <td>Friday</td>
-                    <td class="availability-busy">Not Available</td>
-                </tr>
-                <tr>
-                    <td>Saturday</td>
-                    <td class="availability-available">6AM - 12PM</td>
-                </tr>
-                <tr>
-                    <td>Sunday</td>
-                    <td class="availability-busy">Closed</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+                <div id="Coach-Mark-schedule" class="coach-specific-schedule">
+                    <h4>Coach Mark's Schedule</h4>
+                    <div class="coach-avatar-large">M</div>
+                    <table class="coach-schedule-table">
+                        <thead>
+                            <tr>
+                                <th>Day</th>
+                                <th>Availability</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Monday</td>
+                                <td class="availability-available">1PM - 5PM</td>
+                            </tr>
+                            <tr>
+                                <td>Tuesday</td>
+                                <td class="availability-available">6AM - 12PM</td>
+                            </tr>
+                            <tr>
+                                <td>Wednesday</td>
+                                <td class="availability-available">9AM - 3PM</td>
+                            </tr>
+                            <tr>
+                                <td>Thursday</td>
+                                <td class="availability-available">1PM - 5PM</td>
+                            </tr>
+                            <tr>
+                                <td>Friday</td>
+                                <td class="availability-busy">Not Available</td>
+                            </tr>
+                            <tr>
+                                <td>Saturday</td>
+                                <td class="availability-available">6AM - 12PM</td>
+                            </tr>
+                            <tr>
+                                <td>Sunday</td>
+                                <td class="availability-busy">Closed</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-    <div id="Coach-Jayson-schedule" class="coach-specific-schedule">
-        <h4>Coach Jayson's Schedule</h4>
-        <div class="coach-avatar-large">J</div>
-        <table class="coach-schedule-table">
-            <thead>
-                <tr>
-                    <th>Day</th>
-                    <th>Availability</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Monday</td>
-                    <td class="availability-available">9AM - 3PM</td>
-                </tr>
-                <tr>
-                    <td>Tuesday</td>
-                    <td class="availability-busy">Not Available</td>
-                </tr>
-                <tr>
-                    <td>Wednesday</td>
-                    <td class="availability-available">6AM - 12PM</td>
-                </tr>
-                <tr>
-                    <td>Thursday</td>
-                    <td class="availability-available">9AM - 3PM</td>
-                </tr>
-                <tr>
-                    <td>Friday</td>
-                    <td class="availability-available">1PM - 5PM</td>
-                </tr>
-                <tr>
-                    <td>Saturday</td>
-                    <td class="availability-available">1PM - 5PM</td>
-                </tr>
-                <tr>
-                    <td>Sunday</td>
-                    <td class="availability-busy">Closed</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
-<button type="submit" class="appointment-button">Set Appointment</button>
-    </form>
-    <p id="status-message"></p>
+                <div id="Coach-Jayson-schedule" class="coach-specific-schedule">
+                    <h4>Coach Jayson's Schedule</h4>
+                    <div class="coach-avatar-large">J</div>
+                    <table class="coach-schedule-table">
+                        <thead>
+                            <tr>
+                                <th>Day</th>
+                                <th>Availability</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Monday</td>
+                                <td class="availability-available">9AM - 3PM</td>
+                            </tr>
+                            <tr>
+                                <td>Tuesday</td>
+                                <td class="availability-busy">Not Available</td>
+                            </tr>
+                            <tr>
+                                <td>Wednesday</td>
+                                <td class="availability-available">6AM - 12PM</td>
+                            </tr>
+                            <tr>
+                                <td>Thursday</td>
+                                <td class="availability-available">9AM - 3PM</td>
+                            </tr>
+                            <tr>
+                                <td>Friday</td>
+                                <td class="availability-available">1PM - 5PM</td>
+                            </tr>
+                            <tr>
+                                <td>Saturday</td>
+                                <td class="availability-available">1PM - 5PM</td>
+                            </tr>
+                            <tr>
+                                <td>Sunday</td>
+                                <td class="availability-busy">Closed</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <button type="submit" class="appointment-button">Set Appointment</button>
             </form>
             <p id="status-message"></p>
         </div>
@@ -672,6 +540,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['action'])) {
             <p>📱 @pspubeltmanilapro</p>
         </div>
     </div>
+</body>
+</html>
 
     <script>
     $(document).ready(function() {

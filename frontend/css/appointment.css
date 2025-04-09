@@ -3,11 +3,11 @@ body {
   font-family: "Arial", sans-serif;
   margin: 0;
   padding: 0;
-  background: url("../resources/appointmentbg.jpg") no-repeat center center
-    fixed;
+  background: url("../resources/appointmentbg.jpg") no-repeat center center fixed;
   background-size: cover;
   color: #fff;
 }
+
 .header-right {
   display: flex;
   align-items: center;
@@ -19,11 +19,13 @@ body {
 .appointment-section {
   text-align: center;
   margin: 60px auto 40px;
+  max-width: 800px;
+  padding: 20px;
 }
 
 .appointment-section h1 {
   text-align: center;
-  font-size: 3.3rem; /* Adjust as necessary */
+  font-size: 3.3rem;
   color: #fdd835;
   padding: 40px 25px;
   border-radius: 10px;
@@ -36,13 +38,16 @@ body {
 
 /* Form Styles */
 .appointment-form {
-  background-color: rgba(0, 0, 0, 0.95); /* Semi-transparent black */  
-  color: #000;
+  background-color: rgba(255, 255, 255, 0.95);
+  color: #000000; /* Changed to white text for better visibility on dark background */
   max-width: 700px;
   margin: 20px auto;
   padding: 40px;
   border-radius: 15px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .appointment-form label {
@@ -50,6 +55,9 @@ body {
   margin-bottom: 8px;
   font-weight: bold;
   font-size: 16px;
+  text-align: left;
+  width: 100%;
+  color: #fff; /* Ensuring label text is visible on dark background */
 }
 
 .appointment-form input,
@@ -61,10 +69,11 @@ body {
   border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 16px;
+  box-sizing: border-box;
 }
 
 .appointment-form textarea {
-  resize: none;
+  resize: vertical;
 }
 
 .appointment-form button {
@@ -77,11 +86,179 @@ body {
   cursor: pointer;
   border-radius: 8px;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+  margin-top: 15px;
 }
+
 .appointment-form button:hover {
   background-color: #000;
   color: #fdd835;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Fixed trainer checkbox alignment */
+.trainer-checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 5px 0;
+  width: 100%;
+}
+
+.trainer-checkbox-wrapper input[type="checkbox"] {
+  margin-right: 10px;
+  width: auto; /* Override the 100% width */
+  margin-bottom: 0; /* Override bottom margin */
+}
+
+.trainer-checkbox-wrapper label {
+  margin: 0;
+  font-size: 15px;
+  display: inline; /* Changed to inline from block */
+  width: auto; /* Allow label to take necessary width */
+  flex: 1; /* Let the label take up remaining space */
+}
+
+/* Trainer selection and availability */
+.trainer-selection-container {
+  margin: 15px 0;
+  width: 100%;
+}
+
+#trainer-options {
+  margin-top: 10px;
+  width: 100%;
+}
+
+/* Trainer schedule styling */
+.trainer-schedule-container {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 15px;
+  margin-top: 15px;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: none; /* Initially hidden */
+  width: 100%;
+}
+
+.trainer-schedule-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+.trainer-schedule-table th,
+.trainer-schedule-table td,
+.coach-schedule-table th,
+.coach-schedule-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+  color: #333; /* Ensuring text is dark and readable */
+}
+
+.trainer-schedule-table th,
+.coach-schedule-table th {
+  background-color: #f8f9fa;
+  color: #333;
+}
+
+.availability-available {
+  color: #28a745;
+  font-weight: bold;
+}
+
+.availability-busy {
+  color: #dc3545;
+}
+
+.trainer-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.trainer-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #007bff;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.trainer-name {
+  color: #333;
+  font-size: 16px;
+}
+
+.coach-avatar-large {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #007bff;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 15px auto;
+  font-weight: bold;
+  font-size: 24px;
+}
+
+.coach-specific-schedule {
+  display: none;
+  text-align: center;
+  width: 100%;
+}
+
+.coach-schedule-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+/* Back button for individual coach schedules */
+.back-to-all {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 15px;
+}
+
+.back-to-all:hover {
+  background-color: #5a6268;
+}
+
+/* Making sure all text in the trainer schedule is readable */
+#trainer-schedule h4 {
+  color: #333;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.coach-specific-schedule h4 {
+  color: #333;
+  margin-bottom: 15px;
+}
+
+/* Small text styling */
+.form-text {
+  color: #ccc;
+  font-size: 12px;
+  margin-top: -15px;
+  margin-bottom: 15px;
+  width: 100%;
+  text-align: left;
 }
 
 /* Footer */
@@ -104,6 +281,59 @@ body {
   margin: 5px 0;
 }
 
+/* Appointment List Section */
+.appointment-list {
+  margin-top: 30px;
+  padding: 20px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.appointment-list h2 {
+  font-size: 24px;
+  text-align: center;
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 20px;
+  padding: 10px;
+  border-bottom: 2px solid #fdd835;
+}
+
+/* Table Styles */
+.table-responsive {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+th {
+  background: #fdd835;
+  color: white;
+  font-size: 16px;
+  padding: 12px;
+  text-align: center;
+}
+
+td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: center;
+  font-size: 14px;
+  color: #333;
+}
+
+tbody tr:nth-child(even) {
+  background: #f9f9f9;
+}
+
 /* Responsive Design */
 @media screen and (max-width: 768px) {
   .header {
@@ -120,153 +350,8 @@ body {
     align-items: center;
     text-align: center;
   }
-}
-
-.appointment-section {
-  max-width: 800px;
-  margin: 0 auto; /* Centers the section horizontally */
-  padding: 20px;
-}
-
-.appointment-form {
-  background: #f9f9f9;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Center the content horizontally */
-}
-
-label {
-  display: block;
-  margin-top: 10px;
-  font-weight: bold;
-  text-align: left; /* Ensure labels align to the left */
-  width: 100%; /* Make sure labels span full width */
-}
-
-input,
-textarea,
-select {
-  width: 100%;
-  padding: 12px; /* Increased padding for better usability */
-  margin-top: 5px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 16px;
-  box-sizing: border-box; /* Ensures padding is inside the width */
-}
-
-textarea {
-  resize: vertical; /* Allows vertical resizing */
-}
-
-button {
-  padding: 12px 20px;
-  background-color: #ff8800;
-  border: none;
-  color: white;
-  font-size: 16px;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 15px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-button:hover {
-  background-color: #e77f00;
-}
-
-/* 🔹 Appointment Section */
-.appointment-list {
-  margin-top: 30px;
-  padding: 20px;
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* 🔹 Heading Styling */
-.appointment-list h2 {
-  font-size: 24px;
-  text-align: center;
-  color: #333;
-  font-weight: bold;
-  margin-bottom: 20px;
-  padding: 10px;
-  border-bottom: 2px solid #fdd835;
-}
-
-/* 🔹 Table Responsiveness */
-.table-responsive {
-  overflow-x: auto;
-}
-
-/* 🔹 Table Styling */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-  background: #fff;
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-/* 🔹 Table Headers */
-th {
-  background: #fdd835;
-  color: white;
-  font-size: 16px;
-  padding: 12px;
-  text-align: center;
-}
-
-/* 🔹 Table Rows */
-td {
-  border: 1px solid #ddd;
-  padding: 12px;
-  text-align: center;
-  font-size: 14px;
-  color: #333;
-}
-
-/* 🔹 Alternating Row Colors */
-tbody tr:nth-child(even) {
-  background: #f9f9f9;
-}
-
-/* 🔹 Button Styling */
-button {
-  padding: 8px 15px;
-  background: #ff4d4d;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-button[type="submit"] {
-  color: #fff; /* White text */
-}
-
-
-button:hover {
-  background: #cc0000;
-}
-
-/* 🔹 Status Styling */
-td span {
-  font-weight: bold;
-  color: #888;
-}
-
-/* 🔹 Mobile Responsive */
-@media (max-width: 600px) {
-  th,
-  td {
+  
+  th, td {
     padding: 8px;
     font-size: 14px;
   }
