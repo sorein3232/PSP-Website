@@ -6,6 +6,8 @@ include('includes/header.php');
 
 // Define currency symbol
 $currency_symbol = "₱";
+// Define maximum balance addition amount
+$max_balance_amount = 18000;
 
 // Handle logout
 if (isset($_GET['logout']) && $_GET['logout'] == 'true') {
@@ -122,6 +124,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_balance'])) {
     $balance_amount = $_POST['balance_amount'];
     $balance_date = $_POST['balance_date'];
     $balance_note = $_POST['balance_note'];
+
+    // Validate balance amount doesn't exceed maximum (server-side validation)
+    if ($balance_amount > $max_balance_amount) {
+        $_SESSION['payment_error'] = "Balance addition exceeds maximum limit of {$currency_symbol}{$max_balance_amount}";
+        header("Location: payment.php");
+        exit();
+    }
 
     // Get user ID from username
     $stmt = $conn->prepare("SELECT id, account_balance FROM users WHERE username = ?");
@@ -461,7 +470,7 @@ $users = $conn->query($users_query);
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST">
+                <form method="POST" id="balanceForm">
                     <div class="form-group">
                         <label>Username:</label>
                         <select name="username" class="form-control" required>
@@ -478,7 +487,13 @@ $users = $conn->query($users_query);
 
                     <div class="form-group">
                         <label>Balance Amount (<?php echo $currency_symbol; ?>):</label>
-                        <input type="number" step="0.01" name="balance_amount" class="form-control" required>
+                        <input type="number" step="0.01" name="balance_amount" id="balance-amount" class="form-control" max="<?php echo $max_balance_amount; ?>" required>
+                        <small id="max-balance-warning" class="form-text text-danger" style="display: none;">
+                            Warning: Balance amount exceeds maximum limit of <?php echo $currency_symbol; ?><?php echo number_format($max_balance_amount, 2); ?>.
+                        </small>
+                        <small class="form-text text-muted">
+                            Maximum allowed: <?php echo $currency_symbol; ?><?php echo number_format($max_balance_amount, 2); ?>
+                        </small>
                     </div>
 
                     <div class="form-group">
@@ -492,7 +507,7 @@ $users = $conn->query($users_query);
                     </div>
 
                     <div class="modal-footer">
-                        <button type="submit" name="add_balance" class="btn btn-success">Add Balance</button>
+                        <button type="submit" name="add_balance" class="btn btn-success" id="submit-balance-btn">Add Balance</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                     </div>
                 </form>
@@ -502,6 +517,9 @@ $users = $conn->query($users_query);
 </div>
 
 <script>
+    // Define maximum balance amount for client-side validation
+    const maxBalanceAmount = <?php echo $max_balance_amount; ?>;
+    
     function removePayment(paymentId) {
         if (confirm("Are you sure you want to remove this payment?")) {
             $.ajax({
@@ -568,6 +586,11 @@ $users = $conn->query($users_query);
             validatePaymentAmount();
         });
         
+        // Check balance amount against maximum when amount changes
+        $('#balance-amount').on('input', function() {
+            validateBalanceAmount();
+        });
+        
         // Initialize balance display
         updateAvailableBalance();
         
@@ -576,6 +599,16 @@ $users = $conn->query($users_query);
             if (!validatePaymentAmount()) {
                 e.preventDefault();
                 alert('Payment amount exceeds available balance!');
+                return false;
+            }
+            return true;
+        });
+        
+        // Validate balance form before submission
+        $('#balanceForm').on('submit', function(e) {
+            if (!validateBalanceAmount()) {
+                e.preventDefault();
+                alert('Balance amount exceeds maximum limit of ₱' + maxBalanceAmount.toFixed(2) + '!');
                 return false;
             }
             return true;
@@ -601,6 +634,21 @@ $users = $conn->query($users_query);
             } else {
                 $('#balance-warning').hide();
                 $('#submit-payment-btn').prop('disabled', false);
+                return true;
+            }
+        }
+        
+        // Function to validate balance amount against maximum limit
+        function validateBalanceAmount() {
+            var amount = parseFloat($('#balance-amount').val()) || 0;
+            
+            if (amount > maxBalanceAmount) {
+                $('#max-balance-warning').show();
+                $('#submit-balance-btn').prop('disabled', true);
+                return false;
+            } else {
+                $('#max-balance-warning').hide();
+                $('#submit-balance-btn').prop('disabled', false);
                 return true;
             }
         }
