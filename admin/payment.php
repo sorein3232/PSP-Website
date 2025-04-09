@@ -4,6 +4,9 @@ session_start();
 include 'database.php';
 include('includes/header.php');
 
+// Define currency symbol
+$currency_symbol = "₱";
+
 // Handle logout
 if (isset($_GET['logout']) && $_GET['logout'] == 'true') {
     session_destroy();
@@ -181,6 +184,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_payment'])) {
         $user_id = $user['id'];
         $current_balance = $user['account_balance'];
 
+        // Check if payment exceeds account balance
+        if ($money_paid > $current_balance) {
+            // Set error message in session
+            $_SESSION['payment_error'] = "Payment amount exceeds account balance. Available balance: {$currency_symbol}{$current_balance}";
+            header("Location: payment.php");
+            exit();
+        }
+
         // Calculate new balance (deduct money paid)
         $new_balance = $current_balance - $money_paid;
 
@@ -234,8 +245,9 @@ $balance_additions_query = "SELECT ba.balance_addition_id, u.username,
                             ORDER BY ba.created_at DESC";
 $balance_additions_result = $conn->query($balance_additions_query);
 
-// Fetch users for dropdown
-$users = $conn->query("SELECT username FROM users ORDER BY username");
+// Fetch users for dropdown with account balance
+$users_query = "SELECT username, account_balance FROM users ORDER BY username";
+$users = $conn->query($users_query);
 ?>
 
 <div class="content-header">
@@ -256,6 +268,16 @@ $users = $conn->query("SELECT username FROM users ORDER BY username");
 
 <section class="content">
     <div class="container-fluid">
+        <?php if (isset($_SESSION['payment_error'])): ?>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Error!</strong> <?php echo $_SESSION['payment_error']; ?>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <?php unset($_SESSION['payment_error']); ?>
+        <?php endif; ?>
+        
         <!-- Payments Card -->
         <div class="card">
             <div class="card-body">
@@ -279,21 +301,43 @@ $users = $conn->query("SELECT username FROM users ORDER BY username");
                                 <th>Username</th>
                                 <th>Payment Date</th>
                                 <th>Payment Due</th>
-                                <th>Money Paid</th>
+                                <th>Money Paid (<?php echo $currency_symbol; ?>)</th>
                                 <th>Promo Applied</th>
-                                <th>Account Balance</th>
+                                <th>Account Balance (<?php echo $currency_symbol; ?>)</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php while ($row = $payments_result->fetch_assoc()) { ?>
-                                <tr id="row-<?php echo $row['payment_id']; ?>">
+                                <?php 
+                                    // Check if payment is due soon (within 7 days)
+                                    $due_date = new DateTime($row['payment_due']);
+                                    $today = new DateTime();
+                                    $days_until_due = $today->diff($due_date)->days;
+                                    $is_due_soon = $due_date > $today && $days_until_due <= 7; 
+                                    $is_overdue = $due_date < $today;
+                                    
+                                    $row_class = '';
+                                    if ($is_overdue) {
+                                        $row_class = 'table-danger';
+                                    } elseif ($is_due_soon) {
+                                        $row_class = 'table-warning';
+                                    }
+                                ?>
+                                <tr id="row-<?php echo $row['payment_id']; ?>" class="<?php echo $row_class; ?>">
                                     <td><?php echo htmlspecialchars($row['username']); ?></td>
                                     <td><?php echo htmlspecialchars($row['payment_date']); ?></td>
-                                    <td><?php echo htmlspecialchars($row['payment_due']); ?></td>
-                                    <td><?php echo number_format($row['money_paid'], 2); ?></td>
+                                    <td>
+                                        <?php echo htmlspecialchars($row['payment_due']); ?>
+                                        <?php if ($is_overdue): ?>
+                                            <span class="badge badge-danger">Overdue</span>
+                                        <?php elseif ($is_due_soon): ?>
+                                            <span class="badge badge-warning">Due soon</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td><?php echo $currency_symbol . number_format($row['money_paid'], 2); ?></td>
                                     <td><?php echo htmlspecialchars($row['promo_applied']); ?></td>
-                                    <td><?php echo number_format($row['account_balance'], 2); ?></td>
+                                    <td><?php echo $currency_symbol . number_format($row['account_balance'], 2); ?></td>
                                     <td>
                                         <button class="btn btn-danger btn-sm" onclick="removePayment(<?php echo $row['payment_id']; ?>)">Remove</button>
                                     </td>
@@ -317,7 +361,7 @@ $users = $conn->query("SELECT username FROM users ORDER BY username");
                             <tr>
                                 <th>Username</th>
                                 <th>Balance Date</th>
-                                <th>Balance Amount</th>
+                                <th>Balance Amount (<?php echo $currency_symbol; ?>)</th>
                                 <th>Balance Note</th>
                                 <th>Created At</th>
                                 <th>Actions</th>
@@ -328,7 +372,7 @@ $users = $conn->query("SELECT username FROM users ORDER BY username");
                                 <tr id="balance-row-<?php echo $row['balance_addition_id']; ?>">
                                     <td><?php echo htmlspecialchars($row['username']); ?></td>
                                     <td><?php echo htmlspecialchars($row['balance_date']); ?></td>
-                                    <td><?php echo number_format($row['balance_amount'], 2); ?></td>
+                                    <td><?php echo $currency_symbol . number_format($row['balance_amount'], 2); ?></td>
                                     <td><?php echo htmlspecialchars($row['balance_note'] ?: 'N/A'); ?></td>
                                     <td><?php echo htmlspecialchars($row['created_at']); ?></td>
                                     <td>
@@ -355,15 +399,17 @@ $users = $conn->query("SELECT username FROM users ORDER BY username");
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST">
+                <form method="POST" id="paymentForm">
                     <div class="form-group">
                         <label>Username:</label>
-                        <select name="username" class="form-control" required>
+                        <select name="username" id="payment-username" class="form-control" required>
                             <?php 
                             // Reset the users result pointer
                             $users->data_seek(0);
                             while ($user = $users->fetch_assoc()) { ?>
-                                <option value="<?= htmlspecialchars($user['username']); ?>"><?= htmlspecialchars($user['username']); ?></option>
+                                <option value="<?= htmlspecialchars($user['username']); ?>" data-balance="<?= $user['account_balance']; ?>">
+                                    <?= htmlspecialchars($user['username']); ?> (Balance: <?= $currency_symbol . number_format($user['account_balance'], 2); ?>)
+                                </option>
                             <?php } ?>
                         </select>
                     </div>
@@ -379,8 +425,14 @@ $users = $conn->query("SELECT username FROM users ORDER BY username");
                     </div>
 
                     <div class="form-group">
-                        <label>Money Paid:</label>
-                        <input type="number" step="0.01" name="money_paid" class="form-control" required>
+                        <label>Money Paid (<?php echo $currency_symbol; ?>):</label>
+                        <input type="number" step="0.01" name="money_paid" id="money-paid" class="form-control" required>
+                        <small id="balance-warning" class="form-text text-danger" style="display: none;">
+                            Warning: Payment amount exceeds available balance.
+                        </small>
+                        <small class="form-text text-muted">
+                            Available balance: <?php echo $currency_symbol; ?><span id="available-balance">0.00</span>
+                        </small>
                     </div>
 
                     <div class="form-group">
@@ -389,7 +441,7 @@ $users = $conn->query("SELECT username FROM users ORDER BY username");
                     </div>
 
                     <div class="modal-footer">
-                        <button type="submit" name="add_payment" class="btn btn-success">Save Payment</button>
+                        <button type="submit" name="add_payment" class="btn btn-success" id="submit-payment-btn">Save Payment</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                     </div>
                 </form>
@@ -417,13 +469,15 @@ $users = $conn->query("SELECT username FROM users ORDER BY username");
                             // Reset the users result pointer
                             $users->data_seek(0);
                             while ($user = $users->fetch_assoc()) { ?>
-                                <option value="<?= htmlspecialchars($user['username']); ?>"><?= htmlspecialchars($user['username']); ?></option>
+                                <option value="<?= htmlspecialchars($user['username']); ?>">
+                                    <?= htmlspecialchars($user['username']); ?> (Current Balance: <?= $currency_symbol . number_format($user['account_balance'], 2); ?>)
+                                </option>
                             <?php } ?>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label>Balance Amount:</label>
+                        <label>Balance Amount (<?php echo $currency_symbol; ?>):</label>
                         <input type="number" step="0.01" name="balance_amount" class="form-control" required>
                     </div>
 
@@ -504,7 +558,57 @@ $users = $conn->query("SELECT username FROM users ORDER BY username");
 
     // Ensure jQuery and Bootstrap are loaded
     $(document).ready(function() {
-        // Optional: Add any page load initialization here
+        // Update available balance display when user changes
+        $('#payment-username').change(function() {
+            updateAvailableBalance();
+        });
+        
+        // Check payment amount against balance when amount changes
+        $('#money-paid').on('input', function() {
+            validatePaymentAmount();
+        });
+        
+        // Initialize balance display
+        updateAvailableBalance();
+        
+        // Validate payment form before submission
+        $('#paymentForm').on('submit', function(e) {
+            if (!validatePaymentAmount()) {
+                e.preventDefault();
+                alert('Payment amount exceeds available balance!');
+                return false;
+            }
+            return true;
+        });
+        
+        // Function to update the available balance display
+        function updateAvailableBalance() {
+            var selectedOption = $('#payment-username option:selected');
+            var balance = selectedOption.data('balance');
+            $('#available-balance').text(parseFloat(balance).toFixed(2));
+            validatePaymentAmount();
+        }
+        
+        // Function to validate payment amount against available balance
+        function validatePaymentAmount() {
+            var balance = parseFloat($('#payment-username option:selected').data('balance'));
+            var amount = parseFloat($('#money-paid').val()) || 0;
+            
+            if (amount > balance) {
+                $('#balance-warning').show();
+                $('#submit-payment-btn').prop('disabled', true);
+                return false;
+            } else {
+                $('#balance-warning').hide();
+                $('#submit-payment-btn').prop('disabled', false);
+                return true;
+            }
+        }
+        
+        // Auto-dismiss alerts after 5 seconds
+        setTimeout(function() {
+            $('.alert').alert('close');
+        }, 5000);
     });
 </script>
 
