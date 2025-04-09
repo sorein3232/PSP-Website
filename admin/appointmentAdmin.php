@@ -3,7 +3,7 @@ session_start();
 require_once "database.php";
 
 // Redirect to login if not an admin
-if (!isset($_SESSION['admin_id'])) {
+if (!isset($_SESSION['admin'])) {
     header("Location: adminLogin.php");
     exit();
 }

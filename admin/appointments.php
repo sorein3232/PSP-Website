@@ -60,8 +60,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['change_status_appointm
     $appointment_id = intval($_POST['change_status_appointment_id']);
     $new_status = $_POST['new_status'];
 
-    // Validate status
-    $valid_statuses = ['Pending', 'Done', 'Cancelled'];
+    // Validate status - Changed 'Done' to 'Approved'
+    $valid_statuses = ['Pending', 'Approved', 'Cancelled'];
     if (!in_array($new_status, $valid_statuses)) {
         echo json_encode(["success" => false, "error" => "Invalid status"]);
         ob_end_flush();
@@ -143,7 +143,7 @@ $result = $conn->query($sql);
                                                 </button>
                                                 <div class='dropdown-menu'>
                                                     <a class='dropdown-item status-change' href='#' data-id='" . $row['appointment_id'] . "' data-status='Pending'>Pending</a>
-                                                    <a class='dropdown-item status-change' href='#' data-id='" . $row['appointment_id'] . "' data-status='Done'>Done</a>
+                                                    <a class='dropdown-item status-change' href='#' data-id='" . $row['appointment_id'] . "' data-status='Approved'>Approved</a>
                                                     <a class='dropdown-item status-change' href='#' data-id='" . $row['appointment_id'] . "' data-status='Cancelled'>Cancelled</a>
                                                 </div>
                                             </div>
