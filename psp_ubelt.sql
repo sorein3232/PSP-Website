@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 27, 2025 at 04:12 PM
+-- Generation Time: Apr 09, 2025 at 11:42 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -30,16 +30,65 @@ SET time_zone = "+00:00";
 CREATE TABLE `admin` (
   `id` int(11) NOT NULL,
   `email` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL
+  `password` varchar(255) NOT NULL,
+  `login_attempts` int(11) DEFAULT 0,
+  `lock_until` datetime DEFAULT NULL,
+  `lockout_count` int(11) DEFAULT 0,
+  `recovery_code` varchar(10) DEFAULT NULL,
+  `recovery_code_expires` datetime DEFAULT NULL,
+  `reset_token` varchar(255) DEFAULT NULL,
+  `reset_expires` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `admin`
 --
 
-INSERT INTO `admin` (`id`, `email`, `password`) VALUES
-(1, 'admin@example.com', '$2y$10$Nol8CKeo269rOoTpU77W7u6hDyilzavOFppyC3iV0HVzse2nw4QXa'),
-(2, 'admin1@example.com', '$2y$10$SPBfsVseiJXeYnQv1rAIZuMLPdZH38PB6I/2DlFm3QmSwA6PYKsd.');
+INSERT INTO `admin` (`id`, `email`, `password`, `login_attempts`, `lock_until`, `lockout_count`, `recovery_code`, `recovery_code_expires`, `reset_token`, `reset_expires`) VALUES
+(13, 'admin1@example.com', '$2y$10$rdF8/ibGP6wKYkjpUbQuV.o3Z.Bk/KNvE0y/DbjqvjHkqujPLj1nO', 0, NULL, 0, NULL, NULL, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `admin_activity_log`
+--
+
+CREATE TABLE `admin_activity_log` (
+  `id` int(11) NOT NULL,
+  `admin_id` int(11) NOT NULL,
+  `activity_type` varchar(50) NOT NULL,
+  `ip_address` varchar(45) NOT NULL,
+  `timestamp` datetime NOT NULL,
+  `details` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `admin_login_attempts`
+--
+
+CREATE TABLE `admin_login_attempts` (
+  `id` int(11) NOT NULL,
+  `ip_address` varchar(45) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `success` tinyint(1) DEFAULT 0,
+  `attempt_time` datetime NOT NULL,
+  `is_locked` tinyint(1) DEFAULT 0,
+  `lockout_time` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `admin_login_attempts`
+--
+
+INSERT INTO `admin_login_attempts` (`id`, `ip_address`, `email`, `success`, `attempt_time`, `is_locked`, `lockout_time`) VALUES
+(1, '::1', 'luiszara@gmail.com', 0, '2025-04-08 22:58:43', 0, NULL),
+(2, '::1', 'luiszara@gmail.com', 0, '2025-04-08 22:58:44', 0, NULL),
+(3, '::1', 'luiszara@gmail.com', 0, '2025-04-08 22:59:01', 0, NULL),
+(4, '::1', 'admin123@example.com', 0, '2025-04-08 22:59:12', 0, NULL),
+(5, '::1', 'admin123@example.com', 0, '2025-04-08 23:02:11', 0, NULL),
+(6, '::1', 'admin123@example.com', 0, '0000-00-00 00:00:00', 1, '2025-04-08 23:17:11');
 
 -- --------------------------------------------------------
 
@@ -52,18 +101,21 @@ CREATE TABLE `advertisements` (
   `title` varchar(255) NOT NULL,
   `image` varchar(255) NOT NULL,
   `created_at` datetime DEFAULT current_timestamp(),
-  `description` text NOT NULL
+  `description` text NOT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1 COMMENT 'Status flag: 1=active, 0=inactive'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `advertisements`
 --
 
-INSERT INTO `advertisements` (`id`, `title`, `image`, `created_at`, `description`) VALUES
-(2, 'New4', 'uploads/boracay-philippines.jpg', '2025-03-18 07:24:43', 'test'),
-(5, 'Ut ut maiores ut dol', 'uploads/1_y6C4nSvy2Woe0m7bWEn4BA.png', '2025-03-23 21:50:39', 'Hic ducimus ullamco'),
-(17, 'New3', 'uploads/67e440e2435d7_472976138_1259992965110466_6504442411776558840_n.png', '2025-03-27 02:01:06', '123'),
-(18, 'ewq321', 'uploads/67e567c77b737_cisco-certification-roadmap-2020-large.png', '2025-03-27 16:01:14', '123');
+INSERT INTO `advertisements` (`id`, `title`, `image`, `created_at`, `description`, `is_active`) VALUES
+(2, 'New4', 'uploads/boracay-philippines.jpg', '2025-03-18 07:24:43', 'test', 0),
+(5, 'Ut ut maiores ut dol', 'uploads/1_y6C4nSvy2Woe0m7bWEn4BA.png', '2025-03-23 21:50:39', 'Hic ducimus ullamco', 0),
+(17, 'New3', 'uploads/67e440e2435d7_472976138_1259992965110466_6504442411776558840_n.png', '2025-03-27 02:01:06', '123', 0),
+(18, 'ewq321', 'uploads/67f537cbe143f_Giaz75IWUAAuWx0.jpg', '2025-04-08 16:50:51', '123', 1),
+(19, '123', 'uploads/67f55b3c0acd0_Giaz75IWUAAuWx0.jpg', '2025-04-08 19:22:04', '123', 0),
+(20, '123', 'uploads/67f62a977a8f4_Giaz75IWUAAuWx0.jpg', '2025-04-09 10:06:47', '123', 1);
 
 -- --------------------------------------------------------
 
@@ -125,7 +177,7 @@ CREATE TABLE `balance_additions` (
 --
 
 INSERT INTO `balance_additions` (`balance_addition_id`, `user_id`, `balance_amount`, `balance_date`, `balance_note`, `created_at`) VALUES
-(6, 30, 15000.00, '2025-03-27', '', '2025-03-26 18:10:08');
+(7, 35, 10000.00, '2025-04-09', '', '2025-04-09 03:52:02');
 
 -- --------------------------------------------------------
 
@@ -148,7 +200,7 @@ CREATE TABLE `payments` (
 --
 
 INSERT INTO `payments` (`payment_id`, `user_id`, `payment_date`, `payment_due`, `money_paid`, `promo_applied`, `balance_adjustment`) VALUES
-(36, 30, '2025-03-27', '2025-08-27', 6000.00, '', 0.00);
+(37, 35, '2025-04-09', '2025-04-18', 10000.00, '', 0.00);
 
 -- --------------------------------------------------------
 
@@ -162,6 +214,8 @@ CREATE TABLE `schedule` (
   `day` varchar(20) NOT NULL,
   `personnel_name` varchar(50) DEFAULT NULL,
   `activity_description` varchar(100) DEFAULT NULL,
+  `start_time` time DEFAULT NULL,
+  `end_time` time DEFAULT NULL,
   `time` time DEFAULT NULL,
   `created_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -170,13 +224,14 @@ CREATE TABLE `schedule` (
 -- Dumping data for table `schedule`
 --
 
-INSERT INTO `schedule` (`id`, `schedule_picture`, `day`, `personnel_name`, `activity_description`, `time`, `created_at`) VALUES
-(1, 'cisco-certification-roadmap-2020-large.png', 'Monday', 'COACH PAU', 'YOGA', '17:00:00', '2025-03-27 15:30:56'),
-(2, 'image2.jpg', 'Tuesday', 'Coach Tags', 'H.I.I.T', '16:00:00', '2025-03-27 15:30:23'),
-(3, 'image3.jpg', 'Wednesday', 'Coach Jeromasde', 'MixedFit', '20:00:00', '2025-03-18 12:13:45'),
-(4, 'image4.jpg', 'Thursday', 'Teacher Wany', 'Yoga', '17:00:00', '2025-03-19 12:13:45'),
-(5, 'image5.jpg', 'Friday', 'Coach Antony', 'Tabata', '19:00:00', '2025-03-20 12:13:45'),
-(6, 'talking.png', 'Saturday', 's', 'Rest', '08:04:00', '2025-03-21 10:13:45');
+INSERT INTO `schedule` (`id`, `schedule_picture`, `day`, `personnel_name`, `activity_description`, `start_time`, `end_time`, `time`, `created_at`) VALUES
+(1, 'cisco-certification-roadmap-2020-large.png', 'Monday', 'COACH PAU', 'YOGA', '17:00:00', '18:00:00', '17:00:00', '2025-03-27 15:30:56'),
+(2, 'image2.jpg', 'Tuesday', 'Coach Tags', 'H.I.I.T', '16:00:00', '17:00:00', '16:00:00', '2025-03-27 15:30:23'),
+(3, 'image3.jpg', 'Wednesday', 'Coach Jeromasde', 'MixedFit', '20:00:00', '21:00:00', '20:00:00', '2025-03-18 12:13:45'),
+(4, 'image4.jpg', 'Thursday', 'Teacher Wany', 'Yoga', '17:00:00', '18:00:00', '17:00:00', '2025-03-19 12:13:45'),
+(5, 'image5.jpg', 'Friday', 'Coach Antony', 'Tabata', '19:00:00', '20:00:00', '19:00:00', '2025-03-20 12:13:45'),
+(6, 'talking.png', 'Saturday', 's', 'Rest', '08:04:00', '09:04:00', '08:04:00', '2025-03-21 10:13:45'),
+(7, 'talking.png', 'Sunday', 's', 'Closed', '08:04:00', '09:04:00', '08:04:00', '2025-03-21 10:13:45');
 
 -- --------------------------------------------------------
 
@@ -187,6 +242,8 @@ INSERT INTO `schedule` (`id`, `schedule_picture`, `day`, `personnel_name`, `acti
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
   `fullName` varchar(255) NOT NULL,
+  `first_name` varchar(100) DEFAULT NULL,
+  `last_name` varchar(100) DEFAULT NULL,
   `emailAddress` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `phoneNumber` varchar(20) NOT NULL,
@@ -210,9 +267,8 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `fullName`, `emailAddress`, `password`, `phoneNumber`, `membership_status`, `date_started`, `next_payment`, `birthday`, `username`, `profile_picture`, `reset_token`, `reset_expires`, `email_verified`, `verification_token`, `frozen_at`, `login_attempts`, `lock_until`, `account_balance`) VALUES
-(30, 'Luis Zaraa', 'luiszara321@gmail.com', '$2y$10$LAH5gDbtj2dJa06X5MqliuMm6yw0fJe42VR.09pffvYxILxHgzY4G', '639052588348', 'active', '0000-00-00', '0000-00-00', '2000-03-02', 'luiszara', 'default.png', 'b5e78ee06b43e0d3167b6794223c37fd0aa5a1ddc823dd0085d8d664b06f02166e67e36273c27e485b971ad4319f6e8469bb', '2025-03-27 05:06:51', 1, NULL, NULL, 0, NULL, 9000.00),
-(31, 'Luis Zara', 'luisjoaquinzara@gmail.com', '$2y$10$ocg3y72zieBgJlpfJigCyenVmUkfRldyChYa8diFsjr/M4kLXZKkC', '639052588348', 'inactive', '0000-00-00', '0000-00-00', '2000-03-02', 'luisz', 'default.png', NULL, NULL, 1, NULL, NULL, 0, NULL, 0.00);
+INSERT INTO `users` (`id`, `fullName`, `first_name`, `last_name`, `emailAddress`, `password`, `phoneNumber`, `membership_status`, `date_started`, `next_payment`, `birthday`, `username`, `profile_picture`, `reset_token`, `reset_expires`, `email_verified`, `verification_token`, `frozen_at`, `login_attempts`, `lock_until`, `account_balance`) VALUES
+(35, 'Luis Zara', 'Luis', 'Zara', 'luiszara321@gmail.com', '$2y$10$pzIhr2TNsFwxjGfBmnJHf.GhZALKFtcr43mVI/R4EWP5C2gf3Mf4O', '639052588348', 'inactive', '0000-00-00', '0000-00-00', '2000-03-02', 'luisz', 'default.png', '24bdd34bb02426340e309cdc7d3582bbc1a4e289974dcac2ad525d56e4f812260ca422c3ab4ae275a8ffef7ac7f1cbc65d90', '2025-04-09 20:07:56', 1, NULL, NULL, 0, NULL, 0.00);
 
 --
 -- Indexes for dumped tables
@@ -224,6 +280,18 @@ INSERT INTO `users` (`id`, `fullName`, `emailAddress`, `password`, `phoneNumber`
 ALTER TABLE `admin`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `email` (`email`);
+
+--
+-- Indexes for table `admin_activity_log`
+--
+ALTER TABLE `admin_activity_log`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `admin_login_attempts`
+--
+ALTER TABLE `admin_login_attempts`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `advertisements`
@@ -280,13 +348,25 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `admin`
 --
 ALTER TABLE `admin`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+
+--
+-- AUTO_INCREMENT for table `admin_activity_log`
+--
+ALTER TABLE `admin_activity_log`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `admin_login_attempts`
+--
+ALTER TABLE `admin_login_attempts`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `advertisements`
 --
 ALTER TABLE `advertisements`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `announcements`
@@ -304,25 +384,25 @@ ALTER TABLE `appointments`
 -- AUTO_INCREMENT for table `balance_additions`
 --
 ALTER TABLE `balance_additions`
-  MODIFY `balance_addition_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `balance_addition_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `payments`
 --
 ALTER TABLE `payments`
-  MODIFY `payment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `payment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT for table `schedule`
 --
 ALTER TABLE `schedule`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- Constraints for dumped tables
