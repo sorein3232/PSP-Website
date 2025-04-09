@@ -131,6 +131,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['action'])) {
             border-radius: 4px;
         }
         
+        
         /* Styles for trainer selection and availability */
         .trainer-selection-container {
             margin: 15px 0;
@@ -268,6 +269,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['action'])) {
     color: #333;
     margin-bottom: 15px;
 }
+
+
     </style>
 </head>
 <body>
