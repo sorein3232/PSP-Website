@@ -56,7 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $_SESSION['admin_email'] = $adminEmail;
                     
                     // Redirect to the dashboard
-                    header("Location: appointmentAdmin.php");
+                    header("Location: gymMembers.php");
                     exit();
                 } else {
                     // Increment login attempts

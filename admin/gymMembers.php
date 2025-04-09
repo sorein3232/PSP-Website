@@ -3,7 +3,7 @@ session_start();
 require_once 'database.php';
 
 // Authentication Check
-if (!isset($_SESSION['admin'])) {
+if (!isset($_SESSION['admin_id'])) {
     header("Location: adminLogin.php");
     exit();
 }

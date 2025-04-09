@@ -23,7 +23,7 @@ if (isset($_GET['logout']) && $_GET['logout'] == 'true') {
 }
 
 // Modify session check with output buffering
-if (!isset($_SESSION['admin'])) {
+if (!isset($_SESSION['admin_id'])) {
     ob_end_clean();
     header("Location: adminLogin.php");
     exit();
