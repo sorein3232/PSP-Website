@@ -119,7 +119,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Detailed password validation
     $password_errors = [];
     if (strlen($password) < 8 || strlen($password) > 16) {
-        $password_errors[] = "Password must be 8-16 characters long";
+        $password_errors[] = "Password must be 8 or more characters long";
     }
     if (!preg_match('/[A-Z]/', $password)) {
         $password_errors[] = "Include at least one uppercase letter";
