@@ -139,10 +139,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['action'])) {
         }
         
         .trainer-checkbox-wrapper {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-        }
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 5px 0;
+}
+
+.trainer-checkbox-wrapper label {
+    margin: 0 0 0 8px;
+    font-size: 15px;
+}
         
         .trainer-checkbox-wrapper input[type="checkbox"] {
             margin-right: 10px;
@@ -310,8 +316,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['action'])) {
                 <input type="text" id="date" name="date" placeholder="Select Date" required>
                 
                 <label for="time">Appointment Time</label>
-<input type="time" id="time-input" name="time" min="06:00" max="00:00" step="900" required>
-<small class="form-text text-muted">Select a time between 6:00 AM and 12:00 AM (midnight). Time slots are available in 15-minute intervals. If you wish to avail a personal trainer, please select an appointment time based on your chosen trainer's schedule shown below.</small>
+                <input type="time" id="time-input" name="time" min="06:00" max="17:00" step="3600" required>
+                <small class="form-text text-muted">Select a time between 6:00 AM and 5:00 PM. Time slots are available in 1-hour intervals. If you wish to avail a personal trainer, please select an appointment time based on your chosen trainer's schedule shown below.</small>
                     
                     
                 </select>
@@ -593,7 +599,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['action'])) {
         </table>
     </div>
 </div>
-                <button type="submit">Set Appointment</button>
+<button type="submit" class="appointment-button">Set Appointment</button>
+    </form>
+    <p id="status-message"></p>
             </form>
             <p id="status-message"></p>
         </div>
@@ -704,37 +712,34 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['action'])) {
     
     // Time input validation
     $("#time-input").on("change", function() {
-        const timeValue = $(this).val();
-        if (timeValue) {
-            const hour = parseInt(timeValue.split(':')[0]);
-            const minute = parseInt(timeValue.split(':')[1]);
-            
-            // Validate time is within operating hours (6 AM to 12 AM)
-            if ((hour < 6) || (hour === 0 && minute > 0)) {
-                alert("Please select a time between 6:00 AM and 12:00 AM (midnight).");
-                $(this).val("");
-                return;
-            }
+    const timeValue = $(this).val();
+    if (timeValue) {
+        const hour = parseInt(timeValue.split(':')[0]);
+        const minute = parseInt(timeValue.split(':')[1]);
+        
+        // Validate time is within operating hours (6 AM to 5 PM)
+        if (hour < 6 || hour > 17) {
+            alert("Please select a time between 6:00 AM and 5:00 PM.");
+            $(this).val("");
+            return;
+        }
             
             // Validate that time is in 15-minute intervals
-            if (minute % 15 !== 0) {
-                const roundedMinute = Math.round(minute / 15) * 15;
-                const adjustedHour = hour + (roundedMinute === 60 ? 1 : 0);
-                const adjustedMinute = roundedMinute === 60 ? '00' : (roundedMinute < 10 ? '0' + roundedMinute : roundedMinute);
-                const adjustedTime = (adjustedHour < 10 ? '0' + adjustedHour : adjustedHour) + ':' + adjustedMinute;
-                
-                alert("Times must be in 15-minute intervals. Your time has been adjusted to " + formatTimeForDisplay(adjustedTime));
-                $(this).val(adjustedTime);
-            }
+            if (minute !== 0) {
+            const adjustedTime = (hour < 10 ? '0' + hour : hour) + ':00';
             
-            checkDateTimeLeeway();
-            
-            // Check availability if date is selected
-            if ($("#date").val()) {
-                checkAvailableTimeSlots($("#date").val());
-            }
+            alert("Times must be in 1-hour intervals. Your time has been adjusted to " + formatTimeForDisplay(adjustedTime));
+            $(this).val(adjustedTime);
         }
-    });
+        
+        checkDateTimeLeeway();
+        
+        // Check availability if date is selected
+        if ($("#date").val()) {
+            checkAvailableTimeSlots($("#date").val());
+        }
+    }
+});
     
     // Format time for display (24h to 12h format)
     function formatTimeForDisplay(time24h) {
