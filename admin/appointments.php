@@ -7,7 +7,7 @@ require_once "database.php";
 // Remove any output or whitespace before including header
 ob_clean();
 include('includes/header.php');
-
+include '../session_handler/session_timeout.php';
 // Enable error reporting for debugging
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);

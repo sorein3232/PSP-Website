@@ -1,6 +1,6 @@
 <?php
 session_start();
-
+include '../session_handler/session_timeout.php';
 if (!isset($_SESSION['user_id'])) {
     echo "<script>alert('You must be logged in to access this page.'); window.location.href='login.php';</script>";
     exit();

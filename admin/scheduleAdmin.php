@@ -1,7 +1,7 @@
 <?php
 session_start();
 include("../dbs_connection/database.php");
-
+include '../session_handler/session_timeout.php';
 // Handle logout
 if (isset($_GET['logout']) && $_GET['logout'] == 'true') {
     session_destroy();

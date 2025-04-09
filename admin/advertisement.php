@@ -1,7 +1,7 @@
 <?php
 session_start();
 include 'database.php'; // Ensure this file contains your database connection
-
+include '../session_handler/session_timeout.php';
 if (isset($_GET['logout']) && $_GET['logout'] == 'true') {
     session_destroy();
     header("Location: adminLogin.php");

@@ -2,9 +2,9 @@
 /**
  * Session Idle Time Tracker
  * 
- * This file manages session timeout after 15 minutes of inactivity.
+ * This file manages session timeout after a configured period of inactivity.
  * It can be included at the beginning of any PHP script to enforce
- * idle time detection and automatic logout.
+ * idle time detection and automatic logout with real-time countdown.
  * 
  * How to use:
  * 1. Place this file in a common directory accessible by both admin and user pages
@@ -18,7 +18,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Configuration
-$idle_time = 15 * 60; // 15 minutes in seconds (15 * 60 = 900)
+$idle_time = 5; // 15 minutes in seconds (15 * 60 = 900)
 $admin_redirect = "/admin/timeout.php"; // Redirect URL for admins when session expires
 $user_redirect = "/frontend/logout.php"; // Redirect URL for regular users when session expires
 
@@ -79,7 +79,11 @@ function checkIdleTime() {
 function handleAjaxActivity() {
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update_activity') {
         updateLastActivity();
-        echo json_encode(['status' => 'success', 'timestamp' => $_SESSION['last_activity']]);
+        echo json_encode([
+            'status' => 'success', 
+            'timestamp' => $_SESSION['last_activity'],
+            'timeout' => isset($GLOBALS['idle_time']) ? $GLOBALS['idle_time'] : 900
+        ]);
         exit;
     }
 }
@@ -89,11 +93,15 @@ function handleAjaxActivity() {
  * This automatically adds the necessary JavaScript to the page
  */
 function outputIdleJavaScript() {
+    global $idle_time;
+    
     // Path to the common directory where both JS and PHP files are located
     $file_path = __FILE__;
     $dir_path = dirname($file_path);
     $js_path = str_replace($_SERVER['DOCUMENT_ROOT'], '', $dir_path) . '/idle_tracker.js';
     
+    // Pass the idle time to JavaScript
+    echo "<script>var SESSION_TIMEOUT = " . $idle_time . ";</script>";
     echo "<script src='$js_path'></script>";
 }
 
