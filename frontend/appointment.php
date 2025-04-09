@@ -31,11 +31,25 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['action'])) {
         // Modify trainer handling to allow null/empty value
         $trainer = isset($_POST['trainer']) && $_POST['trainer'] !== '' ? $_POST['trainer'] : null;
 
-        $current_date = date("Y-m-d");
+        // Get current date and time
+        $current_datetime = new DateTime('now');
+        $appointment_datetime = new DateTime($appointment_date . ' ' . $appointment_time);
+        
+        // Calculate time difference in hours
+        $time_diff = $appointment_datetime->getTimestamp() - $current_datetime->getTimestamp();
+        $hours_diff = $time_diff / 3600; // Convert seconds to hours
+        
         $day_of_week = date("w", strtotime($appointment_date));
 
-        if ($appointment_date <= $current_date || $day_of_week == 0) {
-            echo json_encode(['success' => false, 'message' => 'Invalid date! Select a future date and avoid Sundays.']);
+        // Check if appointment is at least 24 hours in the future
+        if ($hours_diff < 24) {
+            echo json_encode(['success' => false, 'message' => 'Appointments must be made at least 24 hours in advance.']);
+            exit();
+        }
+
+        // Check for Sunday
+        if ($day_of_week == 0) {
+            echo json_encode(['success' => false, 'message' => 'Appointments are not available on Sundays.']);
             exit();
         }
 
@@ -71,6 +85,40 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['action'])) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- Flatpickr CSS and JS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    
+    <!-- Add styling for disabled dates and other custom styles -->
+    <style>
+        /* Style for the flatpickr calendar */
+        .flatpickr-day.disabled, 
+        .flatpickr-day.disabled:hover {
+            color: #ccc !important;
+            background-color: #f5f5f5 !important;
+            text-decoration: line-through;
+            cursor: not-allowed !important;
+        }
+        
+        /* Custom time input styling */
+        #time-select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        
+        /* Additional styles for the date input to match other form elements */
+        #date {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
 </head>
 <body>
     <div class="header">
@@ -105,10 +153,24 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['action'])) {
         <div class="appointment-form">
             <form id="appointmentForm">
                 <label for="date">Appointment Date</label>
-                <input type="date" id="date" name="date" required>
-
+                <input type="text" id="date" name="date" placeholder="Select Date" required>
+                
                 <label for="time">Appointment Time</label>
-                <input type="time" id="time" name="time" required>
+                <select id="time-select" name="time" required>
+                    <option value="" disabled selected>Select a time</option>
+                    <option value="06:00">6:00 AM</option>
+                    <option value="07:00">7:00 AM</option>
+                    <option value="08:00">8:00 AM</option>
+                    <option value="09:00">9:00 AM</option>
+                    <option value="10:00">10:00 AM</option>
+                    <option value="11:00">11:00 AM</option>
+                    <option value="12:00">12:00 PM</option>
+                    <option value="13:00">1:00 PM</option>
+                    <option value="14:00">2:00 PM</option>
+                    <option value="15:00">3:00 PM</option>
+                    <option value="16:00">4:00 PM</option>
+                    <option value="17:00">5:00 PM</option>
+                </select>
 
                 <label for="description">Description</label>
                 <textarea id="description" name="description" rows="4" required></textarea>
@@ -202,19 +264,60 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['action'])) {
 
     <script>
     $(document).ready(function() {
-        // Set minimum date to tomorrow
-        let today = new Date();
-        today.setDate(today.getDate() + 1);
-        let minDate = today.toISOString().split('T')[0];
-        $("#date").attr("min", minDate);
-
-        // Prevent Sunday appointments
-        $("#date").on("change", function() {
-            let selectedDate = new Date($(this).val());
-            if (selectedDate.getDay() === 0) {
-                alert("Appointments are not available on Sundays.");
-                $(this).val("");
+        // Calculate tomorrow's date for minimum date selection
+        let tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        
+        // Initialize Flatpickr
+        const datePicker = flatpickr("#date", {
+            minDate: tomorrow,
+            dateFormat: "Y-m-d",
+            disable: [
+                function(date) {
+                    // Disable Sundays (0 is Sunday)
+                    return date.getDay() === 0;
+                }
+            ],
+            // Optional: Add this to show the month and enable navigation between months
+            monthSelectorType: "static",
+            // Prevent selection of disabled dates
+            onChange: function(selectedDates, dateStr, instance) {
+                const selected = selectedDates[0];
+                if (selected && selected.getDay() === 0) {
+                    alert("Appointments are not available on Sundays.");
+                    instance.clear();
+                    return false;
+                }
+                
+                // Check date and time leeway if time is already selected
+                if ($("#time-select").val()) {
+                    checkDateTimeLeeway();
+                }
             }
+        });
+        
+        // Function to check if selected datetime is at least 24 hours in the future
+        function checkDateTimeLeeway() {
+            if ($("#date").val() && $("#time-select").val()) {
+                let selectedDate = $("#date").val();
+                let selectedTime = $("#time-select").val();
+                let selectedDateTime = new Date(selectedDate + 'T' + selectedTime);
+                let now = new Date();
+                
+                // Calculate time difference in hours
+                let timeDiff = (selectedDateTime - now) / (1000 * 60 * 60);
+                
+                if (timeDiff < 24) {
+                    alert("Appointments must be made at least 24 hours in advance.");
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        // Validate time when it changes
+        $("#time-select").on("change", function() {
+            checkDateTimeLeeway();
         });
 
         // Trainer checkbox toggle
@@ -235,10 +338,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['action'])) {
         $("#appointmentForm").on("submit", function(e) {
             e.preventDefault();
             
+            // Check appointment time leeway
+            if (!checkDateTimeLeeway()) {
+                return;
+            }
+            
             // Check if trainer checkbox is checked
             if ($("#trainer-checkbox").is(":checked")) {
                 // If no trainer is selected
-                if ($("#trainer-select").val() === "") {
+                if ($("#trainer-select").val() === null || $("#trainer-select").val() === "") {
                     alert("Please select a trainer before submitting the form.");
                     return;
                 }
