@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once 'database.php';
-
+include '../session_handler/session_timeout.php';
 // Authentication Check
 if (!isset($_SESSION['admin_id'])) {
     header("Location: adminLogin.php");
