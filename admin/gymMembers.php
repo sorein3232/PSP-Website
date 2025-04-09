@@ -71,13 +71,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // User Edit
     if (isset($_POST['action']) && $_POST['action'] === 'edit_user') {
         $userId = intval($_POST['userId']);
+        $firstName = $_POST['firstName'];
+        $lastName = $_POST['lastName'];
         $fullName = $_POST['fullName'];
         $email = $_POST['email'];
         $phone = $_POST['phone'];
 
-        $updateSql = "UPDATE users SET fullName = ?, emailAddress = ?, phoneNumber = ? WHERE id = ?";
+        $updateSql = "UPDATE users SET first_name = ?, last_name = ?, fullName = ?, emailAddress = ?, phoneNumber = ? WHERE id = ?";
         $stmt = $conn->prepare($updateSql);
-        $stmt->bind_param("sssi", $fullName, $email, $phone, $userId);
+        $stmt->bind_param("sssssi", $firstName, $lastName, $fullName, $email, $phone, $userId);
 
         $response = [];
         if ($stmt->execute()) {
@@ -85,6 +87,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 "success" => true, 
                 "message" => "User updated successfully",
                 "userData" => [
+                    "firstName" => $firstName,
+                    "lastName" => $lastName,
                     "fullName" => $fullName,
                     "email" => $email,
                     "phone" => $phone
@@ -131,7 +135,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 }
 
 // Fetch Users
-$sql = "SELECT id, fullName, username, emailAddress, phoneNumber, birthday, membership_status, date_started, next_payment FROM users";
+$sql = "SELECT id, first_name, last_name, fullName, username, emailAddress, phoneNumber, birthday, membership_status, date_started, next_payment FROM users";
 $result = $conn->query($sql);
 
 include('includes/header.php');
@@ -170,6 +174,8 @@ include('includes/header.php');
                             <tr>
                                 <th>USERNAME</th>
                                 <th>USERID</th>
+                                <th>LAST NAME</th>
+                                <th>FIRST NAME</th>
                                 <th>FULL NAME</th>
                                 <th>EMAIL</th>
                                 <th>PHONE NUMBER</th>
@@ -192,6 +198,8 @@ include('includes/header.php');
                                     echo "<tr data-user-id='{$row['id']}'>";
                                     echo "<td class='username'>" . htmlspecialchars($row['username']) . "</td>";
                                     echo "<td class='user-id'>" . htmlspecialchars($row['id']) . "</td>";
+                                    echo "<td class='last-name'>" . htmlspecialchars($row['last_name']) . "</td>";
+                                    echo "<td class='first-name'>" . htmlspecialchars($row['first_name']) . "</td>";
                                     echo "<td class='full-name'>" . htmlspecialchars($row['fullName']) . "</td>";
                                     echo "<td class='email'>" . htmlspecialchars($row['emailAddress']) . "</td>";
                                     echo "<td class='phone'>" . htmlspecialchars($row['phoneNumber']) . "</td>";
@@ -212,7 +220,7 @@ include('includes/header.php');
                                     echo "</tr>";
                                 }
                             } else {
-                                echo "<tr><td colspan='11' class='text-center'>No gym members found.</td></tr>";
+                                echo "<tr><td colspan='13' class='text-center'>No gym members found.</td></tr>";
                             }
                             ?>
                         </tbody>
@@ -244,11 +252,15 @@ $(document).ready(function() {
         const userId = row.data('user-id');
 
         // Backup original values
+        const originalFirstName = row.find('.first-name').text();
+        const originalLastName = row.find('.last-name').text();
         const originalFullName = row.find('.full-name').text();
         const originalEmail = row.find('.email').text();
         const originalPhone = row.find('.phone').text();
 
         // Make fields editable
+        row.find('.first-name').html(`<input type="text" class="form-control edit-first-name" value="${originalFirstName}">`);
+        row.find('.last-name').html(`<input type="text" class="form-control edit-last-name" value="${originalLastName}">`);
         row.find('.full-name').html(`<input type="text" class="form-control edit-full-name" value="${originalFullName}">`);
         row.find('.email').html(`<input type="email" class="form-control edit-email" value="${originalEmail}">`);
         row.find('.phone').html(`<input type="tel" class="form-control edit-phone" value="${originalPhone}">`);
@@ -261,6 +273,8 @@ $(document).ready(function() {
         const row = $(this).closest('tr');
         const userId = row.data('user-id');
 
+        const firstName = row.find('.edit-first-name').val();
+        const lastName = row.find('.edit-last-name').val();
         const fullName = row.find('.edit-full-name').val();
         const email = row.find('.edit-email').val();
         const phone = row.find('.edit-phone').val();
@@ -271,6 +285,8 @@ $(document).ready(function() {
             data: {
                 action: 'edit_user',
                 userId: userId,
+                firstName: firstName,
+                lastName: lastName,
                 fullName: fullName,
                 email: email,
                 phone: phone
@@ -278,6 +294,8 @@ $(document).ready(function() {
             dataType: 'json',
             success: function(response) {
                 if (response.success) {
+                    row.find('.first-name').text(response.userData.firstName);
+                    row.find('.last-name').text(response.userData.lastName);
                     row.find('.full-name').text(response.userData.fullName);
                     row.find('.email').text(response.userData.email);
                     row.find('.phone').text(response.userData.phone);
