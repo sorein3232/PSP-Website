@@ -68,7 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['action'])) {
         $row = $result->fetch_assoc();
 
         if ($row['slot_exists'] > 0) {
-            echo json_encode(['success' => false, 'message' => 'This time slot is already booked. Please select another time.']);
+            echo json_encode(['success' => false, 'message' => 'This time slot is already booked. Please select another time.', 'is_booked' => true]);
             exit();
         }
 
@@ -761,8 +761,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['action'])) {
                 },
                 dataType: 'json',
                 success: function(response) {
-                    if (response.is_booked) {
-                        alert("This time slot is already booked. Please select another time.");
+                    if (response.is_booked || !response.success) {
+                        alert(response.message || "This time slot is already booked. Please select another time.");
                         $("#time-input").val("");
                     }
                 }
