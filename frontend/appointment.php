@@ -266,20 +266,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['action'])) {
                     </div>
 
                     <div id="trainer-schedule" class="trainer-schedule-container">
-                        <h4>Trainers' Availability Schedule</h4>
-                        
-                        <div class="trainer-info">
-                            <div class="trainer-avatar">N</div>
-                            <strong class="trainer-name">Coach Nikko</strong>
-                        </div>
-                        <div class="trainer-info">
-                            <div class="trainer-avatar">M</div>
-                            <strong class="trainer-name">Coach Mark</strong>
-                        </div>
-                        <div class="trainer-info">
-                            <div class="trainer-avatar">J</div>
-                            <strong class="trainer-name">Coach Jayson</strong>
-                        </div>
                         
                         <!-- Main comparison table shown initially -->
                         <table class="trainer-schedule-table">
@@ -620,7 +606,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['action'])) {
     }
     
     // Function to check available time slots for selected date
-    function checkAvailableTimeSlots(selectedDate) {
+        function checkAvailableTimeSlots(selectedDate) {
         if (selectedDate && $("#time-input").val()) {
             $.ajax({
                 url: 'check_available_slots.php',
@@ -631,7 +617,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['action'])) {
                 },
                 dataType: 'json',
                 success: function(response) {
-                    if (response.is_booked || !response.success) {
+                    if (response.is_booked) {
                         alert(response.message || "This time slot is already booked. Please select another time.");
                         $("#time-input").val("");
                     }
