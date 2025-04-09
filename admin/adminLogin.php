@@ -100,6 +100,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             font-weight: bold;
             margin-top: 10px;
         }
+        .links {
+            margin-top: 15px;
+            text-align: center;
+        }
+        .links a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .links a:hover {
+            text-decoration: underline;
+        }
+        .success-message {
+            color: green;
+            margin-top: 15px;
+        }
     </style>
 </head>
 
@@ -111,6 +126,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <input type="email" name="email" placeholder="Email" required>
                 <input type="password" name="password" placeholder="Password" required>
                 <button class="login" type="submit">Login</button>
+                
+                <div class="links">
+                    <a href="forgotPassword.php">Forgot Password?</a>
+                </div>
+                
                 <?php if (isset($_SESSION['login_error'])): ?>
                     <p style="color:red; margin-top: 15px;">
                         <?php echo $_SESSION['login_error']; ?>
@@ -125,6 +145,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         unset($_SESSION['login_error']);
                     }
                     ?>
+                <?php endif; ?>
+                
+                <?php if (isset($_SESSION['login_success'])): ?>
+                    <p class="success-message">
+                        <?php 
+                        echo $_SESSION['login_success']; 
+                        unset($_SESSION['login_success']);
+                        ?>
+                    </p>
                 <?php endif; ?>
             </form>
         </div>
