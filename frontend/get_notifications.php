@@ -3,16 +3,17 @@ include '../dbs_connection/database.php';
 
 header('Content-Type: application/json');
 
+// 1. FETCH RECENT NOTIFICATIONS
 $sql = "
     SELECT * FROM (
-        (SELECT 'Advertisement' AS type, title AS message, created_at FROM advertisements 
+        (SELECT 'Advertisement' AS type, title AS message, created_at, id FROM advertisements 
+         WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR) AND is_active = 1)
+        UNION ALL
+        (SELECT 'Announcement' AS type, title AS message, created_at, id FROM announcements 
          WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR))
         UNION ALL
-        (SELECT 'Announcement' AS type, title AS message, created_at FROM announcements 
+        (SELECT 'Schedule' AS type, activity_description AS message, created_at, id FROM schedule 
          WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR))
-        UNION ALL
-        (SELECT 'Schedule' AS type, activity_description AS message, time AS created_at FROM schedule 
-         WHERE time >= DATE_SUB(NOW(), INTERVAL 24 HOUR))
     ) AS recent_notifications
     ORDER BY created_at DESC 
     LIMIT 10";
@@ -30,6 +31,16 @@ if ($result->num_rows > 0) {
         ];
     }
 }
+
+// 2. OPTIONAL: CLEANUP OLD ADVERTISEMENTS
+// This makes advertisements that are older than 24 hours inactive
+// Note: Only need to do this for advertisements since they have an 'is_active' flag
+$cleanup_sql = "
+    UPDATE advertisements 
+    SET is_active = 0 
+    WHERE created_at < DATE_SUB(NOW(), INTERVAL 24 HOUR) AND is_active = 1";
+
+$conn->query($cleanup_sql);
 
 echo json_encode($notifications);
 
