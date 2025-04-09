@@ -59,6 +59,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['action'])) {
             exit();
         }
 
+        // MODIFIED: Check if the time slot is already booked (regardless of status except 'Cancelled')
+        $stmt = $conn->prepare("SELECT COUNT(*) as slot_exists FROM appointments WHERE appointment_date = ? AND appointment_time = ? AND status != 'Cancelled'");
+        $stmt->bind_param("ss", $appointment_date, $appointment_time);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+
+        if ($row['slot_exists'] > 0) {
+            echo json_encode(['success' => false, 'message' => 'This time slot is already booked. Please select another time.']);
+            exit();
+        }
+
         $stmt = $conn->prepare("INSERT INTO appointments (user_id, appointment_date, appointment_time, description, trainer) VALUES (?, ?, ?, ?, ?)");
         $stmt->bind_param("issss", $user_id, $appointment_date, $appointment_time, $description, $trainer);
 
@@ -230,8 +242,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['action'])) {
                                 <td>
                                     <?php if ($status === 'Pending') { ?>
                                         <button onclick="cancelAppointment(<?= $appointment_id ?>)">Cancel</button>
-                                    <?php } elseif ($status === 'Done') { ?>
-                                        <span>Done</span>
+                                    <?php } elseif ($status === 'Approved') { ?>
+                                        <span>Approved</span>
                                     <?php } else  { ?>
                                         <span>Cancelled</span>
                                     <?php } ?>
@@ -293,8 +305,40 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['action'])) {
                 if ($("#time-select").val()) {
                     checkDateTimeLeeway();
                 }
+                
+                // Check for available time slots
+                checkAvailableTimeSlots(dateStr);
             }
         });
+        
+        // Function to check available time slots for selected date
+        function checkAvailableTimeSlots(selectedDate) {
+            if (selectedDate) {
+                $.ajax({
+                    url: 'check_available_slots.php',
+                    method: 'POST',
+                    data: { date: selectedDate },
+                    dataType: 'json',
+                    success: function(response) {
+                        // Reset all options to enabled
+                        $("#time-select option").prop('disabled', false);
+                        
+                        // Disable times that are already booked
+                        if (response.booked_slots && response.booked_slots.length > 0) {
+                            response.booked_slots.forEach(function(time) {
+                                $("#time-select option[value='" + time + "']").prop('disabled', true);
+                            });
+                        }
+                        
+                        // If currently selected time is now disabled, reset selection
+                        if ($("#time-select").val() && $("#time-select option:selected").prop('disabled')) {
+                            $("#time-select").val("");
+                            alert("Your previously selected time is no longer available. Please select another time.");
+                        }
+                    }
+                });
+            }
+        }
         
         // Function to check if selected datetime is at least 24 hours in the future
         function checkDateTimeLeeway() {
@@ -318,6 +362,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['action'])) {
         // Validate time when it changes
         $("#time-select").on("change", function() {
             checkDateTimeLeeway();
+            
+            // Check availability when time changes too
+            if ($("#date").val()) {
+                checkAvailableTimeSlots($("#date").val());
+            }
         });
 
         // Trainer checkbox toggle
