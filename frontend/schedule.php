@@ -103,6 +103,12 @@ $schedules = array_values($schedules);
             grid-column: 2; /* Center column */
             grid-row: 3; /* Third row */
         }
+
+        .opening-closing-time h4 {
+        margin: 30px 0;
+        color: #FFDB58;
+}
+
     </style>
 </head>
 
@@ -150,6 +156,11 @@ $schedules = array_values($schedules);
         <div class="schedule-banner">
             <h1>Schedules</h1>
         </div>
+
+    <div class="text-center mt-4" style="background-color: rgba(0, 0, 0, 0.5); color: #FFDB58; width: 300px; height: 100px; margin: 0 auto; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); display: flex; flex-direction: column; justify-content: center; align-items: center;">
+        <h4>Opening Time: 7:00 AM</h4>
+        <h4>Closing Time: 9:00 PM</h4>
+    </div>
 
         <div class="group-class-schedule">
             <h2>Group Class Schedule</h2>
@@ -225,9 +236,7 @@ $schedules = array_values($schedules);
                 }
                 ?>
             </div>
-        </div>
-        
-        
+        </div>      
     </div>
 
     <!-- Footer Section -->
