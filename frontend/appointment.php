@@ -160,11 +160,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['action'])) {
             width: 100%;
         }
         
-        /* These styles override any conflicting styles from the external CSS */
-        .trainer-schedule-container {
-            width: 100%;
-        }
-        
         .form-text {
             width: 100%;
             text-align: left;

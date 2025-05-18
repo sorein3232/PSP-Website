@@ -232,8 +232,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_payment'])) {
     exit();
 }
 
-// Fetch payments with user details and account balance
-$payments_query = "SELECT p.payment_id, u.username, 
+// Fetch payments with user details and account balance - now including fullName
+$payments_query = "SELECT p.payment_id, u.username, u.fullName, 
                  DATE_FORMAT(p.payment_date, '%m/%d/%Y') AS payment_date, 
                  DATE_FORMAT(p.payment_due, '%m/%d/%Y') AS payment_due, 
                  p.money_paid, p.promo_applied,
@@ -243,8 +243,8 @@ $payments_query = "SELECT p.payment_id, u.username,
           ORDER BY p.payment_date DESC";
 $payments_result = $conn->query($payments_query);
 
-// Fetch balance additions with user details
-$balance_additions_query = "SELECT ba.balance_addition_id, u.username, 
+// Fetch balance additions with user details - now including fullName
+$balance_additions_query = "SELECT ba.balance_addition_id, u.username, u.fullName, 
                                    DATE_FORMAT(ba.balance_date, '%m/%d/%Y') AS balance_date, 
                                    ba.balance_amount, 
                                    ba.balance_note,
@@ -255,7 +255,7 @@ $balance_additions_query = "SELECT ba.balance_addition_id, u.username,
 $balance_additions_result = $conn->query($balance_additions_query);
 
 // Fetch users for dropdown with account balance
-$users_query = "SELECT username, account_balance FROM users ORDER BY username";
+$users_query = "SELECT username, fullName, account_balance FROM users ORDER BY username";
 $users = $conn->query($users_query);
 ?>
 
@@ -308,6 +308,7 @@ $users = $conn->query($users_query);
                         <thead class="thead-dark">
                             <tr>
                                 <th>Username</th>
+                                <th>Full Name</th>
                                 <th>Payment Date</th>
                                 <th>Payment Due</th>
                                 <th>Money Paid (<?php echo $currency_symbol; ?>)</th>
@@ -335,6 +336,7 @@ $users = $conn->query($users_query);
                                 ?>
                                 <tr id="row-<?php echo $row['payment_id']; ?>" class="<?php echo $row_class; ?>">
                                     <td><?php echo htmlspecialchars($row['username']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['fullName']); ?></td>
                                     <td><?php echo htmlspecialchars($row['payment_date']); ?></td>
                                     <td>
                                         <?php echo htmlspecialchars($row['payment_due']); ?>
@@ -369,6 +371,7 @@ $users = $conn->query($users_query);
                         <thead class="thead-dark">
                             <tr>
                                 <th>Username</th>
+                                <th>Full Name</th>
                                 <th>Balance Date</th>
                                 <th>Balance Amount (<?php echo $currency_symbol; ?>)</th>
                                 <th>Balance Note</th>
@@ -380,6 +383,7 @@ $users = $conn->query($users_query);
                             <?php while ($row = $balance_additions_result->fetch_assoc()) { ?>
                                 <tr id="balance-row-<?php echo $row['balance_addition_id']; ?>">
                                     <td><?php echo htmlspecialchars($row['username']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['fullName']); ?></td>
                                     <td><?php echo htmlspecialchars($row['balance_date']); ?></td>
                                     <td><?php echo $currency_symbol . number_format($row['balance_amount'], 2); ?></td>
                                     <td><?php echo htmlspecialchars($row['balance_note'] ?: 'N/A'); ?></td>
@@ -417,7 +421,7 @@ $users = $conn->query($users_query);
                             $users->data_seek(0);
                             while ($user = $users->fetch_assoc()) { ?>
                                 <option value="<?= htmlspecialchars($user['username']); ?>" data-balance="<?= $user['account_balance']; ?>">
-                                    <?= htmlspecialchars($user['username']); ?> (Balance: <?= $currency_symbol . number_format($user['account_balance'], 2); ?>)
+                                    <?= htmlspecialchars($user['username']); ?> (<?= htmlspecialchars($user['fullName']); ?>) - Balance: <?= $currency_symbol . number_format($user['account_balance'], 2); ?>
                                 </option>
                             <?php } ?>
                         </select>
@@ -479,7 +483,7 @@ $users = $conn->query($users_query);
                             $users->data_seek(0);
                             while ($user = $users->fetch_assoc()) { ?>
                                 <option value="<?= htmlspecialchars($user['username']); ?>">
-                                    <?= htmlspecialchars($user['username']); ?> (Current Balance: <?= $currency_symbol . number_format($user['account_balance'], 2); ?>)
+                                    <?= htmlspecialchars($user['username']); ?> (<?= htmlspecialchars($user['fullName']); ?>) - Current Balance: <?= $currency_symbol . number_format($user['account_balance'], 2); ?>
                                 </option>
                             <?php } ?>
                         </select>
