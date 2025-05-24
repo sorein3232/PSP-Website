@@ -57,7 +57,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $mail->Port = 587;
 
                 $mail->setFrom('subtest164@gmail.com', 'PSP-Ubelt');
-                $mail->addAddress('smpurbano17@gmail.com'); // Safety email for recovery
+                $mail->addAddress('luiszara321@gmail.com'); // Safety email for recovery
                 $mail->isHTML(true);
                 $mail->Subject = "Admin Password Reset Request";
                 $mail->Body = "An admin account password reset was requested for email: $adminEmail.<br><br>
